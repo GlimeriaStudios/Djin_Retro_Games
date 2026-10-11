@@ -2,6 +2,9 @@ import {decorateTrack,alignSurface,constrainObstacles,blockedPoint,impactCamera}
 import {integrateVehicle,VEHICLE} from './vehicle.js';
 // GRAYLINE simulation. Metres, seconds; independent of rendering and networking.
 export const COLORS=['#ffb44a','#65c9ed','#ec809f','#b6dd77'];
+// Seconds/metres: allow roughly a lap to settle in, then give a spun-out car
+// ten seconds to catch up. The two-minute cap still resolves surviving ties.
+export const RACE_RULES=Object.freeze({duration:120,trailingStarts:45,trailingDistance:120,trailingGrace:10});
 export const WEAPONS=['rocket','mine','oil','boost'];
 // The 24 m base road flares to 30–32.4 m at corners for four-car drift battles.
 // Corner control points are spread out so the inner edge never folds over itself.
@@ -116,8 +119,8 @@ export function step(g,inputs={},dt=1/60){g.time+=dt;if(g.phase==='lobby'||g.pha
  for(const s of g.shots){s.life-=dt;s.x+=s.vx*dt;s.z+=s.vz*dt;const near=g.track.nearest(s.x,s.z);if(blockedPoint(g.track,s.x,s.z,.25)||(!exposedAt(g.track,near.s)&&near.d>near.width/2-.55)){s.life=0;event(g,'blast',s.x,s.z);continue;}for(const c of g.cars)if(c.id!==s.owner&&c.alive&&Math.hypot(c.x-s.x,c.z-s.z)<2.7){hit(g,c,48,s.x-s.vx*.06,s.z-s.vz*.06,14,s.owner);s.life=0;event(g,'blast',s.x,s.z);break;}}
  g.shots=g.shots.filter(s=>s.life>0);
  for(const h of g.hazards){h.life-=dt;h.age+=dt;if(h.age<.65)continue;for(const c of g.cars)if(c.alive&&Math.hypot(c.x-h.x,c.z-h.z)<(h.type==='oil'?3.7:2.8)){if(h.type==='oil'){c.oil=1.8;c.omega+=.05;}else{hit(g,c,55,h.x,h.z,17,h.owner);h.life=0;event(g,'blast',h.x,h.z);break;}}}g.hazards=g.hazards.filter(h=>h.life>0);
- let alive=g.cars.filter(c=>c.alive),leader=Math.max(...alive.map(c=>c.progress));for(const c of alive){c.behind=g.raceTime>8&&leader-c.progress>68?c.behind+dt:0;if(c.behind>3)eliminate(g,c,'LEFT BEHIND');}
- alive=g.cars.filter(c=>c.alive);if(alive.length<=1||g.raceTime>=55){const winner=alive.sort((a,b)=>b.progress-a.progress)[0];g.roundWinner=winner?.id??-1;if(winner){winner.score+=2;event(g,'round',winner.x,winner.z,{car:winner.id});}g.phase='round';g.phaseTime=4.5;if(winner?.score>=6){g.phase='match';g.winner=winner.id;}}
+ let alive=g.cars.filter(c=>c.alive),leader=Math.max(...alive.map(c=>c.progress));for(const c of alive){c.behind=g.raceTime>RACE_RULES.trailingStarts&&leader-c.progress>RACE_RULES.trailingDistance?c.behind+dt:0;if(c.behind>=RACE_RULES.trailingGrace)eliminate(g,c,'LEFT BEHIND');}
+ alive=g.cars.filter(c=>c.alive);if(alive.length<=1||g.raceTime>=RACE_RULES.duration){const winner=alive.sort((a,b)=>b.progress-a.progress)[0];g.roundWinner=winner?.id??-1;if(winner){winner.score+=2;event(g,'round',winner.x,winner.z,{car:winner.id});}g.phase='round';g.phaseTime=4.5;if(winner?.score>=6){g.phase='match';g.winner=winner.id;}}
 }
 export function snapshot(g){return{phase:g.phase,time:g.time,phaseTime:g.phaseTime,round:g.round,winner:g.winner,roundWinner:g.roundWinner,raceTime:g.raceTime,cars:g.cars.map(c=>({...c})),pickups:g.pickups,shots:g.shots,hazards:g.hazards,events:g.events,eventId:g.eventId};}
 export function applySnapshot(g,s){if(!s||!Array.isArray(s.cars)||s.cars.length!==4)return;for(const k of ['phase','time','phaseTime','round','winner','roundWinner','raceTime','cars','pickups','shots','hazards','events','eventId'])if(s[k]!==undefined)g[k]=s[k];}

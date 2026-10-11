@@ -111,3 +111,5 @@ Three.js license: public/game/vendor/three.LICENSE.
 The default course has a gravel zone from node 02 through node 04, covering the first bend. In Track Workshop, **Surface to next node** assigns asphalt or gravel to a segment. Old layouts without surface fields remain asphalt; use **Try the new high dock route** or **Load Default** for the new course. Surfaces save, export, import and travel with hosted rooms.
 
 Gravel adds speed-dependent camera bumps; lateral cornering load adds lighter vibration on either surface. Car, wall, solid obstacle and weapon impacts produce short force-dependent jolts. Reduced Motion disables the added camera effects. Surface changes do not alter tire grip.
+
+Race pacing uses shared RACE_RULES: 120-second round cap; trailing elimination starts after 45 seconds, requires a gap over 120 metres for 10 continuous seconds. Catching up clears the countdown. Last-survivor victories and first-to-six scoring are retained.

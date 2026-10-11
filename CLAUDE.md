@@ -106,3 +106,5 @@ Do not run a blanket dependency upgrade; the lockfile is part of reproducibility
 Latest included continuation: October 11 retro weapon hazard bands, rocket fins, oil warning panel, boost details, car hood vents/grilles and bruiser spare wheel. File hashes in the ZIP describe these additions beyond the version-17 baseline.
 
 Surface feedback: optional terrain node `surface` is `asphalt` (legacy default) or `gravel`, applying to the outgoing segment. Nodes 02 and 03 default to gravel. Physics `alignSurface` samples the same section as the mesh, sets car.surface; cameraKick is a bounded collision envelope decayed by integrateVehicle and reset on recovery/rounds. aerialCamera generates speed/load-based high-frequency offsets applied after chase smoothing and restored after render. Motion Low zeroes them. Keep audio independent. Coverage: tests/surfaces.test.mjs.
+
+Race pacing uses shared RACE_RULES: 120-second round cap; trailing elimination starts after 45 seconds, requires a gap over 120 metres for 10 continuous seconds. Catching up clears the countdown. Last-survivor victories and first-to-six scoring are retained.
