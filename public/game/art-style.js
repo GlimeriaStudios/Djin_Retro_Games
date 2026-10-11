@@ -6,7 +6,7 @@ import { shorelineTexture, islandPalms, naturePatch } from './art-nature.js';
 import { ArtPost } from './art-post.js';
 import { ArtMetrics } from './art-metrics.js';
 
-// Track/FX cleanup can occur in either look. Release both GPU material variants
+// Track/FX cleanup releases the source and replacement GPU materials
 // and any original texture replaced by the art pass, without recursive disposal.
 function linkDisposal(original, styled) {
  let releasing=false;
@@ -23,10 +23,10 @@ function linkDisposal(original, styled) {
 }
 
 // Materials and lighting are the only mutable scene state owned by this pass.
-// Original materials stay available so F9 restores the complete old appearance.
+// Visual milestones are reverted through Git, not a second in-game appearance.
 export class ArtStyle {
  constructor(view) {
-  this.view = view; this.enabled = ART.enabled; this.records = new WeakMap();
+  this.view = view; this.records = new WeakSet();
   this.cache = new WeakMap(); this.time = { value: 0 };
   this.grunge = grungeTexture(); this.sign = abstractSignTexture();
   this.shore = {value:null};
@@ -35,45 +35,30 @@ export class ArtStyle {
   const scene = view.scene;
   this.sun = scene.children.find(o => o.isDirectionalLight);
   this.ambient = scene.children.find(o => o.isHemisphereLight);
-  this.original = {
-   background: scene.background.clone(), fog: scene.fog.clone(),
-   exposure: view.renderer.toneMappingExposure,
-   sun: this.sun.color.clone(), intensity: this.sun.intensity, position: this.sun.position.clone(), castShadow:this.sun.castShadow,
-   sky: this.ambient.color.clone(), ground: this.ambient.groundColor.clone(), ambient: this.ambient.intensity,
-   shadow: { left: this.sun.shadow.camera.left, right: this.sun.shadow.camera.right,
-    top: this.sun.shadow.camera.top, bottom: this.sun.shadow.camera.bottom,
-    far: this.sun.shadow.camera.far, bias: this.sun.shadow.bias, normalBias: this.sun.shadow.normalBias },
-  };
   this.applyLighting();
-  window.addEventListener('keydown', e => {
-   if (e.code !== 'F9' || e.repeat || e.target.matches('input,textarea,select')) return;
-   e.preventDefault(); this.setEnabled(!this.enabled);
-  });
  }
- setEnabled(enabled) { this.enabled = enabled; this.applyLighting(); this.scan(); if(this.nature)this.nature.visible=enabled&&ART.nature.palms; }
  rebuild(track) {
   this.shore.value?.dispose();this.shore.value=shorelineTexture(track);
   if(this.nature){this.view.scene.remove(this.nature);this.nature.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});}
-  this.nature=islandPalms();this.nature.visible=this.enabled&&ART.nature.palms;this.view.scene.add(this.nature);
+  this.nature=islandPalms();this.nature.visible=ART.nature.palms;this.view.scene.add(this.nature);
  }
  applyLighting() {
-  const v = this.view, old = this.original, light = ART.lighting;
-  v.scene.background.copy(this.enabled ? new T.Color(light.background) : old.background);
-  v.scene.fog = this.enabled ? new T.Fog(light.background, light.fogNear, light.fogFar) : old.fog.clone();
-  v.renderer.toneMappingExposure = this.enabled ? light.exposure : old.exposure;
-  this.sun.color.copy(this.enabled ? new T.Color(light.sun) : old.sun);
-  this.sun.intensity = this.enabled ? light.intensity : old.intensity;
-  this.sun.castShadow=this.enabled?light.shadows:old.castShadow;
+  const v = this.view, light = ART.lighting;
+  v.scene.background.set(light.background);
+  v.scene.fog = new T.Fog(light.background, light.fogNear, light.fogFar);
+  v.renderer.toneMappingExposure = light.exposure;
+  this.sun.color.set(light.sun);
+  this.sun.intensity = light.intensity;
+  this.sun.castShadow=light.shadows;
   const elevation = light.elevation * Math.PI / 180;
-  if (this.enabled) this.sun.position.set(-Math.cos(elevation)*light.distance*.8, Math.sin(elevation)*light.distance, Math.cos(elevation)*light.distance*.6);
-  else this.sun.position.copy(old.position);
-  this.ambient.color.copy(this.enabled ? new T.Color(light.sky) : old.sky);
-  this.ambient.groundColor.copy(this.enabled ? new T.Color(light.ground) : old.ground);
-  this.ambient.intensity = this.enabled ? light.ambient : old.ambient;
-  const extent = light.shadowExtent, shadow = old.shadow;
-  Object.assign(this.sun.shadow.camera, this.enabled ? {left:-extent,right:extent,top:extent,bottom:-extent,far:light.shadowFar} : {left:shadow.left,right:shadow.right,top:shadow.top,bottom:shadow.bottom,far:shadow.far});
-  this.sun.shadow.bias = this.enabled ? light.shadowBias : shadow.bias;
-  this.sun.shadow.normalBias = this.enabled ? light.shadowNormalBias : shadow.normalBias;
+  this.sun.position.set(-Math.cos(elevation)*light.distance*.8, Math.sin(elevation)*light.distance, Math.cos(elevation)*light.distance*.6);
+  this.ambient.color.set(light.sky);
+  this.ambient.groundColor.set(light.ground);
+  this.ambient.intensity = light.ambient;
+  const extent = light.shadowExtent;
+  Object.assign(this.sun.shadow.camera, {left:-extent,right:extent,top:extent,bottom:-extent,far:light.shadowFar});
+  this.sun.shadow.bias = light.shadowBias;
+  this.sun.shadow.normalBias = light.shadowNormalBias;
   this.sun.shadow.camera.updateProjectionMatrix();
  }
  role(object) {
@@ -125,7 +110,7 @@ export class ArtStyle {
    depthWrite: original.depthWrite, emissive: original.emissive,
    emissiveIntensity: original.emissiveIntensity, roughness: ART.material.roughness,
    metalness: ART.material.metalness });
-  // Rebuilding a track must release programs for both A/B material variants.
+  // Rebuilding a track must also release the replaced source material.
   linkDisposal(original,m);
   const hex=original.color.getHexString(), palette=ART.palette;
   const remap={ '777e91':palette.road, 'd8ac70':palette.gravel, 'c85746':palette.kerbRed,
@@ -162,26 +147,18 @@ export class ArtStyle {
  }
  scan() {
   this.view.scene.traverse(object => {
-   if (!object.isMesh) return;
-   let record = this.records.get(object);
-   if (!record) {
-    const original = object.material, role=this.role(object);
-    if(role==='road'&&ART.material.smoothRoadNormals)smoothRoadLighting(object.geometry);
-    record={original,styled:Array.isArray(original)?original.map(m=>this.material(m,role,object)):this.material(original,role,object)};
-    this.records.set(object,record);
-   }
-   const next=this.enabled?record.styled:record.original;
-   if(object.material!==next) {
-    // Existing FX own opacity. Carry their current fade across an A/B switch.
-    if(!Array.isArray(next)&&!Array.isArray(object.material)) next.opacity=object.material.opacity;
-    object.material=next;
-   }
+   if (!object.isMesh || this.records.has(object)) return;
+   const original = object.material, role=this.role(object);
+   if(role==='road'&&ART.material.smoothRoadNormals)smoothRoadLighting(object.geometry);
+   // Install once. Existing FX continue to own opacity and all their timing.
+   object.material=Array.isArray(original)?original.map(m=>this.material(m,role,object)):this.material(original,role,object);
+   this.records.add(object);
   });
  }
  render(scene,camera) {
-  this.metrics.begin(this.enabled);
+  this.metrics.begin(true);
   this.time.value=performance.now()/1000; this.scan();
-  if(this.enabled&&ART.post.enabled)this.post.render(scene,camera,this.view.cars);
+  if(ART.post.enabled)this.post.render(scene,camera,this.view.cars);
   else this.view.renderer.render(scene,camera);
   this.metrics.end();
  }

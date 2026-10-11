@@ -1,5 +1,7 @@
 # Grayline: appearance-only coastal wear pass
 
+Updated direction: apply the look permanently in separate visual-stage commits. The initial comparison toggle described in this audit was removed after validation at the user's request; further work preserves gameplay and uses Git milestones for rollback.
+
 Baseline: `dc56f69`, branch `art/retro-harbor`. Grayline was not replaced by Sunset Rumble: that prototype lives in a separate repository/publication and is being retired with a redirect. Preserve this baseline's gameplay exactly.
 
 ## Audit

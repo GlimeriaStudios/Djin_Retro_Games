@@ -13,7 +13,7 @@ Engine: vendored Three.js r160, plain ES modules, with the existing Vinext/Vite/
 | File | Responsibility |
 | --- | --- |
 | `public/game/art-config.js` | Central colours, material overrides, wear amounts, light/shadow settings, nature and post controls |
-| `public/game/art-style.js` | Reversible material selection, lighting, F9 toggle and final render routing |
+| `public/game/art-style.js` | Permanent material application, lighting and final render routing |
 | `public/game/art-textures.js` | Seeded tileable FBM, cracks, irregular stains and abstract weathered signage |
 | `public/game/art-shaders.js` | Shared triplanar wear, low mud, upper dust, rust/chip masks, wall streaks, road lighting normals |
 | `public/game/art-nature.js` | Shore-distance texture, animated foam/glints, painterly nature, eight instanced island palms |
@@ -30,9 +30,9 @@ Natural surfaces are excluded from grunge. Existing islands, sand and distant ro
 
 Existing effects retain their geometry, emission rules and timing. The pass recolours fire, sparks, trails, smoke, mine lights, oil and pickup rings. Existing fire particles fade toward charcoal as their existing opacity falls. Pickups retain their original weapon silhouettes, with cyan markers. Non-emissive Standard lighting is capped at the bloom threshold; only emissive output and intentionally luminous FX exceed it. The DOM HUD is never rendered into the post target.
 
-## Toggle and tuning
+## Staged delivery and tuning
 
-Press **F9** in the game to switch the entire look. It restores original material references, light colours/intensities/position, shadow camera settings, background/fog and exposure, hides new dressing, and bypasses post. It does not reset the round. Set `ART.enabled=false` for an original-look default. Edit config then reload to tune; no gameplay code needs editing.
+The coastal look is always active. Following the user's updated direction, the F9 shortcut, global enable flag and old-look restoration path have been removed. Each visual stage remains a separate Git commit for review and rollback. Edit the central art config then reload to tune; no gameplay code needs editing. The earlier before/after screenshots and A/B performance data document the comparison made before removing the toggle.
 
 Tune these five values first:
 

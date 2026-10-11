@@ -1,7 +1,6 @@
 // Appearance only. Metres match the existing meshes; strengths are unitless.
-// F9 switches the complete pass off without touching simulation or camera state.
+// Visual stages are tracked in Git; the coastal look is always active.
 export const ART = {
- enabled: true,
  lighting: {
   sun: '#FFD3A0', intensity: 2.15, elevation: 15, distance: 160,
   sky: '#FFB070', ground: '#4A3A6A', ambient: 2.05,
