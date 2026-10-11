@@ -21,7 +21,7 @@ in the distributed ZIP for exact file hashes. This ZIP is a snapshot, not a live
 - Retro Road Rash II-inspired roadside colour/graphics, stylized toon shading,
   and original aggressive Carmageddon-inspired armored vehicle silhouettes.
   Do not import either game's models, textures, logos or recordings.
-- Mobile: separate left/right buttons; gas on right, handbrake above, fire and reverse.
+- Mobile: separate left/right buttons; gas on right, drift above, fire and reverse.
   Independent pointer ownership permits simultaneous steer, gas and fire.
 - Preserve four-player rooms, opt-in voice, pickups and the synthesized music.
 - Do not call the handling a full racing simulator: it is arcade 2.5D with force-based
@@ -87,6 +87,12 @@ Before changes, inspect the relevant tests. Verify camera, collision, reset, tou
 ownership, weapons and round completion after affected changes. Test rooms separately.
 No user data/room database, node_modules, cache, Git history or credentials are bundled.
 Do not run a blanket dependency upgrade; the lockfile is part of reproducibility.
+
+## October 11 local continuation
+
+- Default Foundry Loop widened to 24 m, with 30–32.4 m corner cross-sections. Saved/imported layouts are preserved; load the default in the workshop to opt into the new course.
+- Space / gamepad X / touch DRIFT now initiate a powered slide above 10 m/s while steering. Countersteer opens the arc; release restores tire grip over 0.35 s. S/Down remains brake/reverse. Bots retain their service brake.
+- Four hood liveries and roof roundels, with teal harbor water and cooler asphalt. Sound and music modules remain separate for sound collaboration.
 
 ## Suggested next focused work
 

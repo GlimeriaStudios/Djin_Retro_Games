@@ -67,8 +67,8 @@ The retro toon cars and roadside art are original, inspired by classic combat ra
 
 ## Controls and rules
 
-WASD/arrows drive; Space brakes; F/Enter fires; R recovers for 20 HP.
-Touch uses independent LEFT/RIGHT, GAS, HANDBRAKE, FIRE and REV buttons.
+WASD/arrows drive; hold Space while accelerating and steering to drift; release to regain grip; S/Down brakes or reverses; F/Enter fires; R recovers for 20 HP.
+Touch uses independent LEFT/RIGHT, GAS, DRIFT, FIRE and REV buttons.
 Quick Drive fills three seats with bots; online rooms allow four people.
 First to six points; round winner earns two. Last survivor wins, or surviving leader
 at 55 seconds. Falling, zero HP or trailing 68 m for three seconds eliminates a car.
