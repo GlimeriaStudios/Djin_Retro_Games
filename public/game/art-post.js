@@ -6,7 +6,8 @@ import { ART } from './art-config.js';
 export class ArtPost {
  constructor(renderer) {
   this.renderer=renderer;this.size=new T.Vector2();this.projected=new T.Vector3();
-  this.target=new T.WebGLRenderTarget(1,1,{type:T.HalfFloatType,depthBuffer:true,samples:renderer.capabilities.isWebGL2?ART.post.samples:0});
+  const hdr=renderer.capabilities.isWebGL2&&renderer.extensions.has('EXT_color_buffer_float');
+  this.target=new T.WebGLRenderTarget(1,1,{type:hdr?T.HalfFloatType:T.UnsignedByteType,depthBuffer:true,samples:renderer.capabilities.isWebGL2?Math.min(ART.post.samples,renderer.capabilities.maxSamples):0});
   this.uniforms={ sceneColor:{value:this.target.texture},texel:{value:new T.Vector2(1,1)},
    focus:{value:new T.Vector2(0,1)},time:{value:0} };
   for(const key of ['bloom','threshold','blur','contrast','saturation','warm','shadowTint','grain','grainFps','vignette','bloomRadius','blurRadius'])this.uniforms[key]={value:ART.post[key]};

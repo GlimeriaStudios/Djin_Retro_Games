@@ -1,19 +1,20 @@
 import * as T from './vendor/three.module.js';
 import { ART } from './art-config.js';
 
-export function surfacePatch(shader,role,texture,origin) {
- const vehicle=role==='vehicle', natural=['rock','sand','water','foliage'].includes(role);
+export function surfacePatch(shader,role,texture,origin,intensity) {
+ const vehicle=role==='vehicle', natural=['rock','sand','water','foliage','gravel'].includes(role);
  const grunge=ART.grunge, p=ART.palette;
  Object.assign(shader.uniforms,{
   artNoise:{value:texture},artOrigin:{value:origin||new T.Vector3()},
-  artScale:{value:grunge.scale},artIntensity:{value:grunge.enabled&&!natural?(vehicle?grunge.vehicle:role==='road'?grunge.road:grunge.building):0},
+  artScale:{value:grunge.scale},artIntensity:{value:grunge.enabled&&!natural?(intensity??(vehicle?grunge.vehicle:role==='road'?grunge.road:grunge.building)):0},
   artRust:{value:new T.Color(p.rust)},artRustLight:{value:new T.Color(p.rustLight)},
   artMud:{value:new T.Color(p.mud)},artDust:{value:new T.Color(p.dust)},artMetal:{value:new T.Color(p.bareMetal)},
-  artRustThreshold:{value:grunge.rustThreshold},artRustStrength:{value:grunge.rustStrength},
+  artRustThreshold:{value:grunge.rustThreshold},artRustStrength:{value:role==='road'?0:grunge.rustStrength},
   artDustStrength:{value:grunge.dust},artMudStrength:{value:grunge.mud},
-  artRoofProtection:{value:vehicle?grunge.roofProtection:0},artEdgeWear:{value:grunge.edgeWear},
+  artRoofProtection:{value:vehicle?grunge.roofProtection:0},artEdgeWear:{value:role==='road'?0:grunge.edgeWear},
   artMudHeight:{value:grunge.mudHeight},artDustThreshold:{value:grunge.dustThreshold},
   artRoadTile:{value:grunge.roadTileMetres},artFill:{value:ART.material.diffuseFill},
+  artWallStreaks:{value:grunge.wallStreaks},artStreakScale:{value:new T.Vector2(grunge.streakWidth,grunge.streakHeight)},
  });
  const varying='varying vec3 vArtWorld; varying vec3 vArtNormal; varying vec3 vArtLocal;';
  shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\n'+varying);
@@ -32,6 +33,7 @@ export function surfacePatch(shader,role,texture,origin) {
   uniform vec3 artOrigin, artRust, artRustLight, artMud, artDust, artMetal;
   uniform float artScale, artIntensity, artRustThreshold, artRustStrength, artDustStrength;
   uniform float artMudStrength, artRoofProtection, artEdgeWear, artMudHeight, artDustThreshold, artRoadTile, artFill;
+  uniform float artWallStreaks; uniform vec2 artStreakScale;
  `);
  // Triplanar noise has no UV dependency, including on the existing instanced walls.
  const sample=`
@@ -56,7 +58,11 @@ export function surfacePatch(shader,role,texture,origin) {
   diffuseColor.rgb*=1.0-artAsphalt.g*artIntensity*.72-artAsphalt.b*artIntensity*.55;
   diffuseColor.rgb*=.91+artAsphalt.r*.18;
  `:'';
- shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\n'+sample+road);
+ const streaks=role==='building'?`
+  float artStreak=smoothstep(.55,.8,texture2D(artNoise,vec2(vArtWorld.x+vArtWorld.z,vArtWorld.y)*artStreakScale).r);
+  diffuseColor.rgb*=1.0-artStreak*(1.0-artUp)*artWallStreaks;
+ `:'';
+ shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\n'+(natural||role==='road'?'':sample)+road+streaks);
  // A restrained painterly fill preserves readable coloured surfaces in violet shade.
  shader.fragmentShader=shader.fragmentShader.replace('#include <opaque_fragment>','outgoingLight += diffuseColor.rgb * artFill;\n#include <opaque_fragment>');
 }

@@ -4,6 +4,7 @@ import { grungeTexture, abstractSignTexture } from './art-textures.js';
 import { surfacePatch } from './art-shaders.js';
 import { shorelineTexture, islandPalms, naturePatch } from './art-nature.js';
 import { ArtPost } from './art-post.js';
+import { ArtMetrics } from './art-metrics.js';
 
 // Materials and lighting are the only mutable scene state owned by this pass.
 // Original materials stay available so F9 restores the complete old appearance.
@@ -14,6 +15,7 @@ export class ArtStyle {
   this.grunge = grungeTexture(); this.sign = abstractSignTexture();
   this.shore = {value:null};
   this.post = new ArtPost(view.renderer);
+  this.metrics = new ArtMetrics(view);
   const scene = view.scene;
   this.sun = scene.children.find(o => o.isDirectionalLight);
   this.ambient = scene.children.find(o => o.isHemisphereLight);
@@ -70,8 +72,11 @@ export class ArtStyle {
   return 'building';
  }
  material(original, role, object) {
+  if(role==='road'&&original.color?.getHexString()==='d8ac70')role='gravel';
   if (!original.isMeshToonMaterial) {
-   if(role==='building' && original.isMeshBasicMaterial && original.map?.isCanvasTexture) {
+   // Preserve the existing 5 × 1.4 m chevrons: wayfinding is gameplay-critical.
+   const wayfinding=object.geometry?.parameters?.width===5&&object.geometry?.parameters?.height===1.4;
+   if(role==='building' && !wayfinding && original.isMeshBasicMaterial && original.map?.isCanvasTexture) {
     const material=original.clone();material.map=this.sign;return material;
    }
    if(original.isMeshBasicMaterial && !original.map) {
@@ -113,15 +118,16 @@ export class ArtStyle {
   if (role === 'foliage') {m.roughness=ART.material.foliageRoughness;m.metalness=0;}
   if (hex==='30284c') {m.color.set(ART.fx.oil);m.roughness=ART.material.oilRoughness;}
   if (hex === '3a4a52') m.roughness = ART.material.glassRoughness;
+  const override=ART.surfaceOverrides[hex];if(override?.roughness!==undefined)m.roughness=override.roughness;
   let car=object;while(car && !this.view.cars.includes(car))car=car.parent;
-  this.patch(m, role, car?.position);
+  this.patch(m, role, car?.position,override?.grunge);
   cache.set(role,m); return m;
  }
- patch(material, role, origin) {
+ patch(material, role, origin, intensity) {
   const rim = role==='vehicle'?ART.rim.vehicle:['rock','foliage'].includes(role)?ART.rim.nature:ART.rim.building;
   material.customProgramCacheKey = () => 'grayline-art-v1-'+role;
   material.onBeforeCompile = shader => {
-   surfacePatch(shader,role,this.grunge,origin);
+   surfacePatch(shader,role,this.grunge,origin,intensity);
    if(ART.nature.enabled)naturePatch(shader,role,this.time,this.shore);
    shader.uniforms.artRim = {value:new T.Color(ART.rim.color)};
    shader.uniforms.artRimStrength = {value:rim};
@@ -151,8 +157,10 @@ export class ArtStyle {
   });
  }
  render(scene,camera) {
+  this.metrics.begin(this.enabled);
   this.time.value=performance.now()/1000; this.scan();
   if(this.enabled&&ART.post.enabled)this.post.render(scene,camera,this.view.cars);
   else this.view.renderer.render(scene,camera);
+  this.metrics.end();
  }
 }

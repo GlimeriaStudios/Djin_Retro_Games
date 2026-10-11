@@ -19,7 +19,8 @@ export function grungeTexture() {
  b.fillStyle=`rgba(255,255,255,${config.stainOpacity})`;
  for(let i=0;i<config.stains;i++) {
   const x=rng()*size,y=rng()*size,rx=size*(.015+rng()*.065),ry=rx*(.4+rng());
-  wrap(b,()=>{b.beginPath();b.ellipse(x,y,rx,ry,0,0,Math.PI*2);b.fill();});
+  const outline=Array.from({length:16},(_,j)=>{const angle=j/16*Math.PI*2,radius=.55+rng()*.45;return [x+Math.cos(angle)*rx*radius,y+Math.sin(angle)*ry*radius];});
+  wrap(b,()=>{b.beginPath();outline.forEach(([px,py],j)=>j?b.lineTo(px,py):b.moveTo(px,py));b.closePath();b.fill();});
  }
  const crack=a.getImageData(0,0,size,size).data, stain=b.getImageData(0,0,size,size).data;
  const grids=[4,8,16,32].map(n=>({n,data:Float32Array.from({length:n*n},rng)}));

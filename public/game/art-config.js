@@ -17,19 +17,26 @@ export const ART = {
   shallow: '#3FB0C0', deep: '#2A5A90', foam: '#edf2df',
  },
  material: { roughness: .82, metalness: .06, glassRoughness: .22, foliageRoughness:.6, oilRoughness:.12, diffuseFill: .58 },
+ // Keys are original material colours, so overrides do not rename model systems.
+ surfaceOverrides: {
+  '3a4a52':{roughness:.22,grunge:.10}, // Vehicle glass: retain a little dust and gloss.
+  '83a6b7':{roughness:.28,grunge:.12}, // Existing resort windows.
+  '151a1d':{roughness:.9,grunge:.20}, // Rubber stays matte.
+ },
  rim: { color: '#FFC27A', vehicle: .34, nature: .16, building: .035, power: 2.4 },
  grunge: {
   enabled: true, vehicle: .42, building: .68, road: .6,
   scale: .8, rustThreshold: .71, rustStrength: .42, dust: .15, mud: .28,
   roofProtection: .82, edgeWear: .18, roadTileMetres: 20,
-  textureSize: 256, seed: 71493, cracks: 12, stains: 22,
+  textureSize: 256, seed: 71493, cracks: 12, stains: 8,
   crackWidth: .65, stainOpacity: .32, scratchDensity: 500,
   mudHeight: 1.15, dustThreshold: .65,
+  wallStreaks:.22, streakWidth:.24, streakHeight:.025,
  },
  signage: { paper:'#d1b391', ink:'#475966', accent:'#b86550', border:18, stripes:5 },
  nature: { enabled: true, gradient: .28, waterScale: .045, waveSpeed: .28,
   glint: .28, foamStrength: .3, foamWidth: 1.8, shoreRadius: 18,
-  shoreTextureSize: 512, worldSize: 650, leafWrap: .18,
+  shoreTextureSize: 512, worldSize: 650, leafWrap: .18, waterShadow:.42,
   islands: [[-102,-60],[115,45],[100,-78],[-100,70]], islandRadius: 10,
   palms: true, palmHeight: 9, trunkRadius: .35, leafLength: 3.5,
   leafWidth: .9, leafThickness: .27, leaves: 7, baseY: -1.75,
