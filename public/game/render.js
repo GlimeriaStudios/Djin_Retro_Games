@@ -1,3 +1,4 @@
+import {ArtStyle} from './art-style.js';
 import {toon,weaponModel,pickupModel,upgradeCar,sceneryPass,CombatFX} from './art.js';
 import {chaseCamera,raceZoom} from './chase.js';
 import {aerialCamera} from './aerial-camera.js';
@@ -5,7 +6,7 @@ import {roadCamera} from './road-camera.js';
 import * as T from './vendor/three.module.js';
 import {COLORS,angleDiff,clamp} from './sim.js';
 export class View{
- constructor(canvas){this.canvas=canvas;this.scene=new T.Scene();this.scene.background=new T.Color('#deb49f');this.scene.fog=new T.Fog('#deb49f',150,440);this.renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:false});this.renderer.setPixelRatio(Math.min(devicePixelRatio,1.4));this.renderer.shadowMap.enabled=true;this.renderer.shadowMap.type=T.PCFSoftShadowMap;this.renderer.outputColorSpace=T.SRGBColorSpace;this.renderer.toneMapping=T.ACESFilmicToneMapping;this.renderer.toneMappingExposure=1.05;this.camera=new T.PerspectiveCamera(45,1,.1,650);this.camera.position.set(120,150,160);this.target=new T.Vector3();this.scene.add(new T.HemisphereLight(0xffdcc1,0x524568,1.7));const sun=new T.DirectionalLight(0xffc68b,2.35);sun.position.set(-75,130,65);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-150,right:150,top:120,bottom:-120,near:1,far:300});sun.shadow.bias=-.0008;sun.shadow.normalBias=.08;this.scene.add(sun);this.staticGroup=new T.Group();this.scene.add(this.staticGroup);this.effects=new T.Group();this.scene.add(this.effects);this.cars=COLORS.map((c,i)=>this.makeCar(c,i));this.pickups=[];this.trails=[];this.particles=[];this.lastEvent=0;this.combatFX=new CombatFX(this.scene);this.camHeading=0;this.mode='garage';this.resize();window.addEventListener('resize',()=>this.resize());}
+ constructor(canvas){this.canvas=canvas;this.scene=new T.Scene();this.scene.background=new T.Color('#deb49f');this.scene.fog=new T.Fog('#deb49f',150,440);this.renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:false});this.renderer.setPixelRatio(Math.min(devicePixelRatio,1.4));this.renderer.shadowMap.enabled=true;this.renderer.shadowMap.type=T.PCFSoftShadowMap;this.renderer.outputColorSpace=T.SRGBColorSpace;this.renderer.toneMapping=T.ACESFilmicToneMapping;this.renderer.toneMappingExposure=1.05;this.camera=new T.PerspectiveCamera(45,1,.1,650);this.camera.position.set(120,150,160);this.target=new T.Vector3();this.scene.add(new T.HemisphereLight(0xffdcc1,0x524568,1.7));const sun=new T.DirectionalLight(0xffc68b,2.35);sun.position.set(-75,130,65);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-150,right:150,top:120,bottom:-120,near:1,far:300});sun.shadow.bias=-.0008;sun.shadow.normalBias=.08;this.scene.add(sun);this.staticGroup=new T.Group();this.scene.add(this.staticGroup);this.effects=new T.Group();this.scene.add(this.effects);this.cars=COLORS.map((c,i)=>this.makeCar(c,i));this.pickups=[];this.trails=[];this.particles=[];this.lastEvent=0;this.combatFX=new CombatFX(this.scene);this.camHeading=0;this.mode='garage';this.artStyle=new ArtStyle(this);this.resize();window.addEventListener('resize',()=>this.resize());}
  resize(){this.renderer.setSize(innerWidth,innerHeight,false);this.camera.aspect=innerWidth/innerHeight;this.camera.updateProjectionMatrix();}
  mat(color,extra={}){const {roughness,metalness,...props}=extra;return toon(color,props);}
  box(w,h,d,color,x=0,y=0,z=0,group=this.staticGroup){const m=new T.Mesh(new T.BoxGeometry(w,h,d),typeof color==='object'?color:this.mat(color));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;group.add(m);return m;}
@@ -93,7 +94,7 @@ export class View{
  // Apply vibration after chase smoothing; restore position to prevent accumulation.
  const basePosition=this.camera.position.clone();
  if(mode==='race'&&!this.reducedMotion){this.camera.translateX(this.aerial.shakeX);this.camera.translateY(this.aerial.shakeY);this.camera.rotateZ(this.aerial.shakeRoll);}
- this.renderer.render(this.scene,this.camera);this.camera.position.copy(basePosition);
+ this.artStyle.render(this.scene,this.camera);this.camera.position.copy(basePosition);
  }
  groundPoint(clientX,clientY){const ray=new T.Raycaster();ray.setFromCamera(new T.Vector2(clientX/innerWidth*2-1,-clientY/innerHeight*2+1),this.camera);const p=new T.Vector3();return ray.ray.intersectPlane(new T.Plane(new T.Vector3(0,1,0),0),p)?{x:p.x,z:p.z}:null;}
 }

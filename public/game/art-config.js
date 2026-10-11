@@ -1,0 +1,34 @@
+// Appearance only. Metres match the existing meshes; strengths are unitless.
+// F9 switches the complete pass off without touching simulation or camera state.
+export const ART = {
+ enabled: true,
+ lighting: {
+  sun: '#FFD3A0', intensity: 2.15, elevation: 15, distance: 160,
+  sky: '#FFB070', ground: '#4A3A6A', ambient: 2.05,
+  background: '#d8a29d', fogNear: 150, fogFar: 440, exposure: 1.0,
+  shadowExtent: 190, shadowFar: 420, shadowBias: -.0005, shadowNormalBias: .08,
+ },
+ palette: {
+  road: '#4A4650', gravel: '#bca27e', kerbRed: '#B83A3A', kerbCream: '#D8D0C4',
+  wall: '#D9B9AE', roof: '#bb806d', steel: '#737780', rust: '#8A4A2A', rustLight: '#B0602E',
+  mud: '#514234', dust: '#c5b59e', bareMetal: '#9a9b98',
+  sand: '#E8C496', rock: '#B08A6A', rockShade: '#79617b',
+  foliage: '#3F8A4A', leafLight: '#7CC45A', trunk: '#8A6A52',
+  shallow: '#3FB0C0', deep: '#2A5A90', foam: '#edf2df',
+ },
+ material: { roughness: .82, metalness: .06, glassRoughness: .22 },
+ rim: { color: '#FFC27A', vehicle: .34, nature: .16, building: .035, power: 2.4 },
+ grunge: {
+  enabled: true, vehicle: .42, building: .68, road: .6,
+  scale: .8, rustThreshold: .71, rustStrength: .42, dust: .15, mud: .28,
+  roofProtection: .82, edgeWear: .18, roadTileMetres: 20,
+  textureSize: 256, seed: 71493, cracks: 32, stains: 22,
+ },
+ nature: { enabled: true, gradient: .28, waterScale: .045, waveSpeed: .28,
+  glint: .28, foamStrength: .3, foamWidth: 1.8, shoreRadius: 25 },
+ fx: { core: '#FFB040', fire: '#FF6A1A', smoke: '#3A3438', trail: '#D8D2CC',
+  spark: '#FFD27A', mine: '#FF2A3A', oil: '#0E0C14', sheen: '#70608b', pickup: '#6AE0F0' },
+ post: { enabled: true, bloom: .1, threshold: 1.15, blur: .3,
+  focusPadding: .14, contrast: 1.055, saturation: .97,
+  warm: .018, shadowTint: .022, grain: .006, grainFps: 24, vignette: .12 },
+};
