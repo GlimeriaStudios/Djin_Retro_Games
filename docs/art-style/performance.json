@@ -1,0 +1,427 @@
+[
+  {
+    "timestamp": "2026-10-11T12:23:16.464Z",
+    "look": "coastal",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.65,
+    "medianFrameMs": 17.6,
+    "p95FrameMs": 19.2,
+    "cpuRenderMedianMs": 9.6,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 60.756,
+    "automaticZoom": 0
+  },
+  {
+    "timestamp": "2026-10-11T12:23:21.754Z",
+    "look": "coastal",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.63,
+    "medianFrameMs": 17.7,
+    "p95FrameMs": 19.4,
+    "cpuRenderMedianMs": 8,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 60.049,
+    "automaticZoom": 0
+  },
+  {
+    "timestamp": "2026-10-11T12:23:27.048Z",
+    "look": "coastal",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.68,
+    "medianFrameMs": 17.6,
+    "p95FrameMs": 19.8,
+    "cpuRenderMedianMs": 6.8,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 54.061,
+    "automaticZoom": 5.996
+  },
+  {
+    "timestamp": "2026-10-11T12:23:32.336Z",
+    "look": "coastal",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.73,
+    "medianFrameMs": 17.7,
+    "p95FrameMs": 19.5,
+    "cpuRenderMedianMs": 7.1,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 54.281,
+    "automaticZoom": 6
+  },
+  {
+    "timestamp": "2026-10-11T12:23:37.627Z",
+    "look": "coastal",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.71,
+    "medianFrameMs": 17.6,
+    "p95FrameMs": 19.4,
+    "cpuRenderMedianMs": 7,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 54.056,
+    "automaticZoom": 6
+  },
+  {
+    "timestamp": "2026-10-11T12:23:42.920Z",
+    "look": "coastal",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.65,
+    "medianFrameMs": 17.6,
+    "p95FrameMs": 19.2,
+    "cpuRenderMedianMs": 7.2,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 54.008,
+    "automaticZoom": 6
+  },
+  {
+    "timestamp": "2026-10-11T12:23:54.893Z",
+    "look": "original",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.54,
+    "medianFrameMs": 17.7,
+    "p95FrameMs": 23.7,
+    "cpuRenderMedianMs": 6.3,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 50.284,
+    "automaticZoom": 9.716
+  },
+  {
+    "timestamp": "2026-10-11T12:24:00.202Z",
+    "look": "original",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.5,
+    "medianFrameMs": 17.6,
+    "p95FrameMs": 23.4,
+    "cpuRenderMedianMs": 6,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 50,
+    "automaticZoom": 10
+  },
+  {
+    "timestamp": "2026-10-11T12:24:05.514Z",
+    "look": "original",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.46,
+    "medianFrameMs": 17.6,
+    "p95FrameMs": 23.7,
+    "cpuRenderMedianMs": 4.8,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 50,
+    "automaticZoom": 10
+  },
+  {
+    "timestamp": "2026-10-11T12:24:10.815Z",
+    "look": "original",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.62,
+    "medianFrameMs": 17.6,
+    "p95FrameMs": 22.7,
+    "cpuRenderMedianMs": 6.4,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 51.946,
+    "automaticZoom": 8.054
+  },
+  {
+    "timestamp": "2026-10-11T12:24:16.120Z",
+    "look": "original",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.57,
+    "medianFrameMs": 17.6,
+    "p95FrameMs": 23.1,
+    "cpuRenderMedianMs": 7.1,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 60,
+    "automaticZoom": 0
+  },
+  {
+    "timestamp": "2026-10-11T12:24:21.410Z",
+    "look": "original",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.69,
+    "medianFrameMs": 17.7,
+    "p95FrameMs": 23.3,
+    "cpuRenderMedianMs": 7.2,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 60.132,
+    "automaticZoom": 0
+  },
+  {
+    "timestamp": "2026-10-11T12:24:26.697Z",
+    "look": "original",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.73,
+    "medianFrameMs": 17.6,
+    "p95FrameMs": 22.9,
+    "cpuRenderMedianMs": 5.3,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 54.66,
+    "automaticZoom": 5.349
+  },
+  {
+    "timestamp": "2026-10-11T12:24:31.985Z",
+    "look": "original",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.74,
+    "medianFrameMs": 17.5,
+    "p95FrameMs": 22.8,
+    "cpuRenderMedianMs": 5.8,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 50.002,
+    "automaticZoom": 9.998
+  },
+  {
+    "timestamp": "2026-10-11T12:24:37.270Z",
+    "look": "original",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.77,
+    "medianFrameMs": 17.6,
+    "p95FrameMs": 22.8,
+    "cpuRenderMedianMs": 6,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 50,
+    "automaticZoom": 10
+  },
+  {
+    "timestamp": "2026-10-11T12:24:45.130Z",
+    "look": "coastal",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.63,
+    "medianFrameMs": 17.6,
+    "p95FrameMs": 23.6,
+    "cpuRenderMedianMs": 6.8,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 55.847,
+    "automaticZoom": 4.2
+  },
+  {
+    "timestamp": "2026-10-11T12:24:53.789Z",
+    "look": "coastal",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.94,
+    "medianFrameMs": 17.6,
+    "p95FrameMs": 23.7,
+    "cpuRenderMedianMs": 6.9,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 50.037,
+    "automaticZoom": 9.963
+  },
+  {
+    "timestamp": "2026-10-11T12:24:59.102Z",
+    "look": "coastal",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.48,
+    "medianFrameMs": 17.5,
+    "p95FrameMs": 22.5,
+    "cpuRenderMedianMs": 7.1,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 50,
+    "automaticZoom": 10
+  },
+  {
+    "timestamp": "2026-10-11T12:25:04.394Z",
+    "look": "coastal",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.68,
+    "medianFrameMs": 17.6,
+    "p95FrameMs": 23.4,
+    "cpuRenderMedianMs": 6.4,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 50,
+    "automaticZoom": 10
+  },
+  {
+    "timestamp": "2026-10-11T12:25:09.691Z",
+    "look": "coastal",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.63,
+    "medianFrameMs": 17.7,
+    "p95FrameMs": 23.3,
+    "cpuRenderMedianMs": 6.2,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 50,
+    "automaticZoom": 10
+  },
+  {
+    "timestamp": "2026-10-11T12:25:14.985Z",
+    "look": "coastal",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.65,
+    "medianFrameMs": 17.8,
+    "p95FrameMs": 22.9,
+    "cpuRenderMedianMs": 5.8,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 51.995,
+    "automaticZoom": 8.005
+  },
+  {
+    "timestamp": "2026-10-11T12:25:20.276Z",
+    "look": "coastal",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.71,
+    "medianFrameMs": 17.7,
+    "p95FrameMs": 22.8,
+    "cpuRenderMedianMs": 5.8,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 52,
+    "automaticZoom": 8
+  },
+  {
+    "timestamp": "2026-10-11T12:25:25.558Z",
+    "look": "coastal",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.81,
+    "medianFrameMs": 17.6,
+    "p95FrameMs": 24.4,
+    "cpuRenderMedianMs": 5.7,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 52,
+    "automaticZoom": 8
+  },
+  {
+    "timestamp": "2026-10-11T12:25:30.851Z",
+    "look": "coastal",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.67,
+    "medianFrameMs": 17.6,
+    "p95FrameMs": 22.8,
+    "cpuRenderMedianMs": 5.6,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 52,
+    "automaticZoom": 8
+  },
+  {
+    "timestamp": "2026-10-11T12:25:36.141Z",
+    "look": "coastal",
+    "mode": "race",
+    "frames": 300,
+    "meanFps": 56.73,
+    "medianFrameMs": 17.5,
+    "p95FrameMs": 23,
+    "cpuRenderMedianMs": 5.5,
+    "viewport": [
+      1269,
+      1404
+    ],
+    "pixelRatio": 1,
+    "fov": 52,
+    "automaticZoom": 8
+  }
+]

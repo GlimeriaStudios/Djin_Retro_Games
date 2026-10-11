@@ -38,8 +38,8 @@ export function weaponModel(type){const g=new T.Group(),col=ARMORY[type].color;
 export function pickupModel(type){const g=new T.Group(),hover=new T.Group(),col=ARMORY[type].color;g.add(hover);const model=weaponModel(type);model.scale.setScalar(type==='rocket'?1.4:1.4);model.rotation.x=type==='rocket'?-.45:0;hover.add(model);const halo=ring(hover,1.15,.06,col,-.4);halo.rotation.x=0;halo.position.y=.6;const pedestal=cyl(g,1.35,1.7,.23,ink,0,-1.35);const ready=ring(g,1.7,.13,col,-1.2);const charge=ring(g,1.35,.15,cream,-1.18);g.userData={hover,ready,charge,pedestal,type};return g;}
 export function upgradeCar(g,id,color){const body=g.userData.body;
  armoredCar(body,id,color);
- // Bold, geometric racing livery and modular roof rack, attached to the authored chassis.
- for(const x of [-.43,.43])box(body,.24,.027,1.05,cream,x,.42,1.35);
+ // Decals follow the wedge-shaped hood instead of floating above its paint.
+ racingLivery(body,id,color);
  for(const x of [-1.064,1.064]){box(body,.028,.22,2.9,ink,x,.02,.15);box(body,.035,.14,.68,cream,x,.30,.8);}
  for(const x of [-.85,.85]){box(body,.18,.18,.5,ink,x,-.08,-2.22);}
  const intake=box(body,.8,.2,.55,ink,0,.55,1.25);box(body,.6,.06,.22,cream,0,.66,1.35);
@@ -109,7 +109,57 @@ function armoredCar(body,id,color){
  for(const x of [-.7,-.35,0,.35,.7])box(body,.12,.12,.025,black,x,.05,2.145);
  for(const side of [-1,1])for(let k=0;k<3;k++){const vent=box(body,.33,.035,.08,black,side*.57,.44,1.05+k*.17);vent.rotation.y=side*.22;}
  // Coarse paint chips instead of photoreal grunge; deterministic and cheap.
- for(let i=0;i<7;i++)box(body,.08+(i%3)*.035,.018,.12,steel,Math.sin(i*7+id)*.8,.43,-1.4+(i%3)*1.25);
+ for(let i=0;i<7;i++){
+  const z=-1.4+(i%3)*1.25;
+  box(body,.08+(i%3)*.035,.012,.12,steel,Math.sin(i*7+id)*.8,hoodHeight(id,z)+.008,z);
+ }
+}
+
+// Chassis dimensions are in metres. The original 4.2 m hull slopes down at
+// its nose by a different amount for each silhouette; graphics share that plane.
+function hoodHeight(id,z){
+ const noseDrop=[.18,.05,.12,.05][id];
+ return .4-noseDrop*(z+2.1)/4.2;
+}
+
+function racingLivery(body,id,color){
+ const canvas=document.createElement('canvas');
+ canvas.width=canvas.height=256; // Small nearest-filtered decals retain the printed arcade look.
+ const ctx=canvas.getContext('2d');
+ ctx.fillStyle=ink;
+ // Different stripe arrangements make each car recognizable without reading text.
+ if(id===0){ctx.fillRect(52,0,48,256);ctx.fillRect(156,0,48,256);}
+ if(id===1){ctx.fillRect(0,130,256,70);for(let x=0;x<256;x+=32)for(let y=0;y<2;y++){if((x/32+y)%2===0)ctx.fillRect(x,60+y*32,32,32);}}
+ if(id===2){for(let x=-180;x<400;x+=92){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x+45,0);ctx.lineTo(x+220,256);ctx.lineTo(x+175,256);ctx.fill();}}
+ if(id===3){ctx.fillRect(0,40,256,45);ctx.fillRect(0,155,256,45);ctx.fillRect(100,0,56,256);}
+ ctx.fillStyle=cream;ctx.fillRect(9,222,238,24);
+ ctx.fillStyle=ink;ctx.font='bold 17px monospace';ctx.textAlign='center';
+ ctx.fillText(['01 / COMET','02 / PATROL','03 / HOTSHOT','04 / IRON'][id],128,240);
+ const map=new T.CanvasTexture(canvas);map.colorSpace=T.SRGBColorSpace;
+ map.magFilter=T.NearestFilter;
+ // Match the hull surface, with a 6 mm offset to avoid depth fighting.
+ const left=-.92,right=.92,back=.78,front=1.94;
+ const vertices=[left,hoodHeight(id,front)+.006,front,right,hoodHeight(id,front)+.006,front,left,hoodHeight(id,back)+.006,back,right,hoodHeight(id,back)+.006,back];
+ const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(vertices,3));
+ geo.setAttribute('uv',new T.Float32BufferAttribute([0,0,1,0,0,1,1,1],2));geo.setIndex([0,1,2,2,1,3]);geo.computeVertexNormals();
+ const decal=new T.Mesh(geo,new T.MeshBasicMaterial({map,transparent:true,depthWrite:false,side:T.DoubleSide}));
+ body.add(decal);
+ // Replace the original square roof label with a cream race-number roundel.
+ const roof=body.children.find(child=>child.isMesh&&child.geometry.type==='PlaneGeometry'&&child.material.map);
+ if(roof){
+  const plate=document.createElement('canvas');plate.width=plate.height=256;
+  const p=plate.getContext('2d');p.fillStyle=ink;p.beginPath();p.arc(128,128,120,0,Math.PI*2);p.fill();
+  p.fillStyle=cream;p.beginPath();p.arc(128,128,106,0,Math.PI*2);p.fill();
+  p.fillStyle=color;p.fillRect(45,49,166,17);p.fillStyle=ink;
+  p.font='900 132px Impact, sans-serif';p.textAlign='center';p.textBaseline='middle';p.fillText(String(id+1).padStart(2,'0'),128,138);
+  roof.material.map.dispose();roof.material.map=new T.CanvasTexture(plate);
+  roof.material.map.colorSpace=T.SRGBColorSpace;roof.material.map.magFilter=T.NearestFilter;
+  roof.material.transparent=true;roof.material.needsUpdate=true;
+  roof.position.y=body.children[1].position.y+.325*body.children[1].scale.y+.012;
+  roof.rotation.z=Math.PI; // Number reads upright from the normal rear chase camera.
+  // The original centre roof stripe must follow the lowered wedge roof too.
+  body.children[6].position.y=roof.position.y-.025;
+ }
 }
 function retroScenery(view,track){
  const root=view.staticGroup;
@@ -144,6 +194,14 @@ export class CombatFX{
  }
  event(e){if(e.type==='blast'||e.type==='hit'){this.emit(e.x,e.z,'#ffdd83','ring');for(let i=0;i<(this.reducedMotion?3:12);i++)this.emit(e.x,e.z,i%2?'#ff7449':'#fff0c9');}if(e.type==='pickup')this.emit(e.x,e.z,ARMORY[e.weapon]?.color||'#fff1ce','ring');if(e.type==='fire')this.emit(e.x,e.z,ARMORY[e.weapon]?.color||'#fff1ce','ring');}
  frame(g,dt){this.clock+=dt;
+  // Two rear-tire puffs every 90 ms make a real slide readable at chase distance.
+  // The existing particle cap and Reduced Motion handling still apply.
+  if(this.clock-(this.lastDrift||0)>.09){
+   this.lastDrift=this.clock;
+   for(const c of g.cars)if(c.alive&&c.drifting&&c.slip>3){
+    for(const side of [-.95,.95])this.emit(c.x-Math.sin(c.a)*1.3+Math.cos(c.a)*side,c.z-Math.cos(c.a)*1.3-Math.sin(c.a)*side,'#d5cab1','smoke',.25);
+   }
+  }
   if(this.clock-this.lastTrail>.045){this.lastTrail=this.clock;for(const s of g.shots)this.emit(s.x,s.z,'#ffdba1','smoke',1);for(const c of g.cars)if(c.alive&&c.boost>0)this.emit(c.x-Math.sin(c.a)*2.5,c.z-Math.cos(c.a)*2.5,'#a1ffe0','smoke',.45);}
   for(const p of this.items){p.life-=dt;const t=1-p.life/p.total;p.m.material.opacity=Math.max(0,1-t);p.m.position.x+=p.vx*dt;p.m.position.z+=p.vz*dt;if(p.kind==='spark'){p.vy-=18*dt;p.m.position.y+=p.vy*dt;p.m.rotation.x+=dt*6;}else p.m.scale.setScalar(p.kind==='ring'?1+t*6:1+t*1.4);if(p.life<=0){this.group.remove(p.m);p.m.geometry.dispose();p.m.material.dispose();}}
   this.items=this.items.filter(p=>p.life>0);

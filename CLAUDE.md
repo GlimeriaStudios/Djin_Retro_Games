@@ -8,7 +8,7 @@ in the distributed ZIP for exact file hashes. This ZIP is a snapshot, not a live
 
 ## User intent and non-negotiable behaviour
 
-- Mashed-inspired four-player browser combat racing. Original code/art/audio.
+- Mashed-inspired four-player browser combat racing. Original code/art; user-supplied race MIDI.
 - Keep personal spring chase: each browser follows its own car only, never the pack.
 - Camera has subtle helicopter/operator wander, delayed banking and occasional bumps.
 - Read road turns ahead; downhill makes the angle more horizontal, uphill steeper.
@@ -21,7 +21,7 @@ in the distributed ZIP for exact file hashes. This ZIP is a snapshot, not a live
 - Retro Road Rash II-inspired roadside colour/graphics, stylized toon shading,
   and original aggressive Carmageddon-inspired armored vehicle silhouettes.
   Do not import either game's models, textures, logos or recordings.
-- Mobile: separate left/right buttons; gas on right, handbrake above, fire and reverse.
+- Mobile: separate left/right buttons; gas on right, drift above, fire and reverse.
   Independent pointer ownership permits simultaneous steer, gas and fire.
 - Preserve four-player rooms, opt-in voice, pickups and the synthesized music.
 - Do not call the handling a full racing simulator: it is arcade 2.5D with force-based
@@ -44,7 +44,7 @@ in the distributed ZIP for exact file hashes. This ZIP is a snapshot, not a live
 | art.js | Toon materials, four car variants, scenery, pickups and combat FX |
 | peer.js / prediction.js / network-motion.js | WebRTC, local replay, remote interpolation |
 | voice.js | Separate opt-in WebRTC audio mesh |
-| music.js | Original synthesized 96 BPM C-minor funk and public-domain Fifth motif |
+| music.js | Supplied 117 BPM race MIDI v2, converted score and Web Audio instrument playback |
 | touch.js / style.css / index.html | Input ownership and responsive game UI |
 | app/api/room/route.ts | D1 room API, seats, signalling, HTTPS fallback |
 | lib/turn.ts | Server-only short-lived Cloudflare TURN credentials |
@@ -88,6 +88,12 @@ ownership, weapons and round completion after affected changes. Test rooms separ
 No user data/room database, node_modules, cache, Git history or credentials are bundled.
 Do not run a blanket dependency upgrade; the lockfile is part of reproducibility.
 
+## October 11 local continuation
+
+- Default Foundry Loop widened to 24 m, with 30–32.4 m corner cross-sections. Saved/imported layouts are preserved; load the default in the workshop to opt into the new course.
+- Space / gamepad X / touch DRIFT now initiate a powered slide above 10 m/s while steering. Countersteer opens the arc; release restores tire grip over 0.35 s. S/Down remains brake/reverse. Bots retain their service brake.
+- Four hood liveries and roof roundels, with teal harbor water and cooler asphalt. Sound and music modules remain separate for sound collaboration.
+
 ## Suggested next focused work
 
 1. Playtest downhill/crest/reverse and tight turns, particularly zoomed mobile framing.
@@ -98,3 +104,11 @@ Do not run a blanket dependency upgrade; the lockfile is part of reproducibility
    may continue after this snapshot. Merge rather than overwrite authored changes.
 
 Latest included continuation: October 11 retro weapon hazard bands, rocket fins, oil warning panel, boost details, car hood vents/grilles and bruiser spare wheel. File hashes in the ZIP describe these additions beyond the version-17 baseline.
+
+Surface feedback: optional terrain node `surface` is `asphalt` (legacy default) or `gravel`, applying to the outgoing segment. Nodes 02 and 03 default to gravel. Physics `alignSurface` samples the same section as the mesh, sets car.surface; cameraKick is a bounded collision envelope decayed by integrateVehicle and reset on recovery/rounds. aerialCamera generates speed/load-based high-frequency offsets applied after chase smoothing and restored after render. Motion Low zeroes them. Keep audio independent. Coverage: tests/surfaces.test.mjs.
+
+Race pacing uses shared RACE_RULES: 120-second round cap; trailing elimination starts after 45 seconds, requires a gap over 120 metres for 10 continuous seconds. Catching up clears the countdown. Last-survivor victories and first-to-six scoring are retained.
+
+Music update: scripts/import-race-midi.mjs converts the checked-in MIDI into race-score.js. All 1,476 notes, velocities and durations are retained. Parts: bass, rhythm guitar, electric piano, theme strings, violins, violas, cellos, drums (kick/snare/closed and open hats/crash). Timing is exact MIDI tempo 512821 microseconds/beat; loop is 56 bars. tests/music.test.mjs validates source hash, note fidelity, loop timing and mute/resume scheduling. A full browser OfflineAudioContext render measured peak 0.4943 and zero clipped samples.
+
+Mobile tilt steering: tap TILT during a race, allow motion access, hold the phone steady for 350 ms to center, and tilt left/right while holding GAS. CENTER recalibrates. Screen rotation triggers new calibration; a 3-degree dead zone and 80 ms smoothing reduce jitter. A missing/stale sensor never holds steering. Touch arrows and gamepad/keyboard override tilt. Sensor permission is requested only from the toggle gesture. Physical handset verification is still required; portrait/landscape layouts, permission failure and simulated sensor lifecycle are tested. Music scheduler skips empty bars while retaining sustained notes; a two-loop regression verifies all 2,952 note starts.

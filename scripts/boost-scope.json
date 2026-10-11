@@ -1,0 +1,127 @@
+[
+  {
+    "file": "public/game/sim.js",
+    "before": "import {integrateVehicle,VEHICLE} from './vehicle.js';",
+    "after": "import {integrateVehicle,VEHICLE} from './vehicle.js';\nimport {updateBoost} from './boost.js';"
+  },
+  {
+    "file": "public/game/sim.js",
+    "before": "cooldown:0,boost:0,oil:0,",
+    "after": "cooldown:0,boost:0,boostCharge:0,boostHeld:false,oil:0,"
+  },
+  {
+    "file": "public/game/sim.js",
+    "before": "integrateVehicle(c,input,dt,track.config);",
+    "after": "integrateVehicle(c,input,dt,track.config);updateBoost(c,input,dt);"
+  },
+  {
+    "file": "public/game/app.js",
+    "before": "import {DrivingAudio} from './driving-audio.js';",
+    "after": "import {DrivingAudio} from './driving-audio.js';\nimport {updateBoostHud} from './boost-hud.js';"
+  },
+  {
+    "file": "public/game/app.js",
+    "before": "seq=0,fireUntil=0,",
+    "after": "seq=0,boostUntil=0,fireUntil=0,"
+  },
+  {
+    "file": "public/game/app.js",
+    "before": "const touch=bindTouchControls($('touch'),()=>fireUntil=performance.now()+220);",
+    "after": "const touch=bindTouchControls($('touch'),()=>fireUntil=performance.now()+220,()=>boostUntil=performance.now()+220);"
+  },
+  {
+    "file": "public/game/app.js",
+    "before": "brake:!!input?.brake,drift:!!input?.drift,",
+    "after": "brake:!!input?.brake,drift:!!input?.drift,boost:!!input?.boost,"
+  },
+  {
+    "file": "public/game/app.js",
+    "before": "drift=!!k.Space,fire=",
+    "after": "drift=!!k.Space,boost=!!(k.KeyE||performance.now()<boostUntil),fire="
+  },
+  {
+    "file": "public/game/app.js",
+    "before": "drift||=pad.buttons[2]?.pressed;",
+    "after": "drift||=pad.buttons[2]?.pressed;boost||=pad.buttons[4]?.pressed;"
+  },
+  {
+    "file": "public/game/app.js",
+    "before": "return{throttle,steer,drift,brake:false,fire,reset,seq:++seq};",
+    "after": "return{throttle,steer,drift,boost,brake:false,fire,reset,seq:++seq};"
+  },
+  {
+    "file": "public/game/app.js",
+    "before": "keys[e.code]=true;if(e.code==='KeyF'",
+    "after": "keys[e.code]=true;if(e.code==='KeyE'&&!e.repeat)boostUntil=performance.now()+220;if(e.code==='KeyF'"
+  },
+  {
+    "file": "public/game/app.js",
+    "before": "touch.reset();fireUntil=0;",
+    "after": "touch.reset();boostUntil=0;fireUntil=0;"
+  },
+  {
+    "file": "public/game/app.js",
+    "before": "touch.reset();fireUntil=0;",
+    "after": "touch.reset();boostUntil=0;fireUntil=0;"
+  },
+  {
+    "file": "public/game/app.js",
+    "before": "touch.reset();fireUntil=0;",
+    "after": "touch.reset();boostUntil=0;fireUntil=0;"
+  },
+  {
+    "file": "public/game/app.js",
+    "before": "function hud(){const c=game.cars[slot];",
+    "after": "function hud(){const c=game.cars[slot];updateBoostHud(c);"
+  },
+  {
+    "file": "public/game/touch.js",
+    "before": "bindTouchControls(root,onFire=()=>{})",
+    "after": "bindTouchControls(root,onFire=()=>{},onBoost=()=>{})"
+  },
+  {
+    "file": "public/game/touch.js",
+    "before": "if(b.dataset.key==='KeyF')onFire();",
+    "after": "if(b.dataset.key==='KeyF')onFire();if(b.dataset.key==='KeyE')onBoost();"
+  },
+  {
+    "file": "app/api/room/route.ts",
+    "before": "brake:!!i.brake,drift:!!i.drift,",
+    "after": "brake:!!i.brake,drift:!!i.drift,boost:!!i.boost,"
+  },
+  {
+    "file": "public/game/index.html",
+    "before": "<div class=\"speedbar\"><i id=\"speedbar\"></i></div>",
+    "after": "<div class=\"speedbar\"><i id=\"speedbar\"></i></div><div id=\"boostPanel\" data-ready=\"false\"><label id=\"boostLabel\" for=\"boostMeter\">DRIFT BOOST · 0%</label><progress id=\"boostMeter\" max=\"100\" value=\"0\"></progress></div>"
+  },
+  {
+    "file": "public/game/index.html",
+    "before": "<button class=\"touch-reverse\"",
+    "after": "<button id=\"touchBoost\" class=\"touch-boost\" data-key=\"KeyE\" aria-label=\"Boost charging\"><b>⚡</b><span>BOOST</span></button><button class=\"touch-reverse\""
+  },
+  {
+    "file": "public/game/index.html",
+    "before": "<br>F <span>FIRE</span>",
+    "after": "<br>E <span>BOOST</span><br>F <span>FIRE</span>"
+  },
+  {
+    "file": "public/game/index.html",
+    "before": "F / Enter: weapon<br>R:",
+    "after": "F / Enter: weapon<br>E: charged drift boost<br>R:"
+  },
+  {
+    "file": "public/game/index.html",
+    "before": "X: drift · RB: fire",
+    "after": "X: drift · RB: fire · LB: boost"
+  },
+  {
+    "file": "public/game/index.html",
+    "before": "Release Space to regain grip. S / Down still brakes.",
+    "after": "Release Space to regain grip. Six seconds of powered drifting fills the boost meter. Press E, LB or the BOOST touch button when full for 2.4 seconds of thrust. Charge is retained between corners and resets each round. Boosting cannot refill the meter. S / Down still brakes."
+  },
+  {
+    "file": "public/game/style.css",
+    "before": "",
+    "after": "\n/* Drift reserve stays below speed; phone boost fits the unused pedal gap. */\n#boostPanel{margin-top:9px;width:140px;font:8px var(--mono);color:#e6c5ac}#boostPanel label{display:block;margin-bottom:5px}#boostMeter{display:block;appearance:none;width:100%;height:7px;border:0;background:#584c61}#boostMeter::-webkit-progress-bar{background:#584c61}#boostMeter::-webkit-progress-value{background:#eaaa62}#boostMeter::-moz-progress-bar{background:#eaaa62}#boostPanel[data-ready=\"true\"]{color:#81e3d7}#boostPanel[data-ready=\"true\"] #boostMeter::-webkit-progress-value{background:#81e3d7}#touch .touch-boost{width:60px;height:60px;left:0;bottom:140px;border-color:#81e3d7;background:#264c52ed}#touch .touch-boost b{font-size:23px}\n@media(max-width:600px){#boostPanel{width:88px;font-size:7px;margin-top:5px}}@media(max-height:500px) and (orientation:landscape){#boostPanel{width:88px;font-size:7px;margin-top:4px}}\n"
+  }
+]

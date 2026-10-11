@@ -1,0 +1,188 @@
+[
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.63,\"medianFrameMs\":17.7,\"p95FrameMs\":18.5,\"cpuRenderMedianMs\":6.5,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":51.838,\"automaticZoom\":8.162}",
+    "timestamp": "2026-10-11T12:35:02.565Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.66,\"medianFrameMs\":17.6,\"p95FrameMs\":20,\"cpuRenderMedianMs\":6.4,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":52,\"automaticZoom\":8}",
+    "timestamp": "2026-10-11T12:35:07.856Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.58,\"medianFrameMs\":17.5,\"p95FrameMs\":23.5,\"cpuRenderMedianMs\":6.1,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":52,\"automaticZoom\":8}",
+    "timestamp": "2026-10-11T12:35:13.161Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.71,\"medianFrameMs\":17.7,\"p95FrameMs\":23,\"cpuRenderMedianMs\":5.9,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":52,\"automaticZoom\":8}",
+    "timestamp": "2026-10-11T12:35:18.449Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.59,\"medianFrameMs\":17.6,\"p95FrameMs\":23.2,\"cpuRenderMedianMs\":5.9,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":52,\"automaticZoom\":8}",
+    "timestamp": "2026-10-11T12:35:23.751Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.7,\"medianFrameMs\":17.7,\"p95FrameMs\":22.8,\"cpuRenderMedianMs\":6.1,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":52,\"automaticZoom\":8}",
+    "timestamp": "2026-10-11T12:35:29.043Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.6,\"medianFrameMs\":17.6,\"p95FrameMs\":22.7,\"cpuRenderMedianMs\":6.7,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":52,\"automaticZoom\":8}",
+    "timestamp": "2026-10-11T12:35:34.344Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.74,\"medianFrameMs\":17.5,\"p95FrameMs\":23,\"cpuRenderMedianMs\":9,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":60.165,\"automaticZoom\":0}",
+    "timestamp": "2026-10-11T12:35:39.633Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.56,\"medianFrameMs\":17.6,\"p95FrameMs\":23.2,\"cpuRenderMedianMs\":8,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":58.691,\"automaticZoom\":1.511}",
+    "timestamp": "2026-10-11T12:35:44.935Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.56,\"medianFrameMs\":17.5,\"p95FrameMs\":23,\"cpuRenderMedianMs\":5.7,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":56.206,\"automaticZoom\":3.999}",
+    "timestamp": "2026-10-11T12:35:50.236Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.77,\"medianFrameMs\":17.6,\"p95FrameMs\":23.6,\"cpuRenderMedianMs\":5.4,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":56.205,\"automaticZoom\":4}",
+    "timestamp": "2026-10-11T12:35:55.523Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.64,\"medianFrameMs\":17.6,\"p95FrameMs\":23.7,\"cpuRenderMedianMs\":5.5,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":56.205,\"automaticZoom\":4}",
+    "timestamp": "2026-10-11T12:36:00.819Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"garage\",\"frames\":300,\"meanFps\":55.62,\"medianFrameMs\":17.7,\"p95FrameMs\":25,\"cpuRenderMedianMs\":5.5,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":45,\"automaticZoom\":4}",
+    "timestamp": "2026-10-11T12:36:06.210Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"original\",\"mode\":\"editor\",\"frames\":300,\"meanFps\":56.66,\"medianFrameMs\":17.6,\"p95FrameMs\":18.2,\"cpuRenderMedianMs\":8.7,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":45,\"automaticZoom\":4}",
+    "timestamp": "2026-10-11T12:36:17.548Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"original\",\"mode\":\"editor\",\"frames\":300,\"meanFps\":56.79,\"medianFrameMs\":17.6,\"p95FrameMs\":18.2,\"cpuRenderMedianMs\":9.1,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":45,\"automaticZoom\":4}",
+    "timestamp": "2026-10-11T12:36:22.831Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":54.61,\"medianFrameMs\":17.6,\"p95FrameMs\":18.2,\"cpuRenderMedianMs\":9.7,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":60,\"automaticZoom\":0}",
+    "timestamp": "2026-10-11T12:36:32.194Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.63,\"medianFrameMs\":17.6,\"p95FrameMs\":18.7,\"cpuRenderMedianMs\":8.8,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":60.439,\"automaticZoom\":0}",
+    "timestamp": "2026-10-11T12:36:37.495Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.6,\"medianFrameMs\":17.7,\"p95FrameMs\":18.6,\"cpuRenderMedianMs\":8.6,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":58.537,\"automaticZoom\":1.511}",
+    "timestamp": "2026-10-11T12:36:42.796Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"original\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.76,\"medianFrameMs\":17.6,\"p95FrameMs\":18.6,\"cpuRenderMedianMs\":6.7,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":54.001,\"automaticZoom\":6}",
+    "timestamp": "2026-10-11T12:36:54.261Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"original\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.64,\"medianFrameMs\":17.6,\"p95FrameMs\":18.7,\"cpuRenderMedianMs\":4.8,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":54,\"automaticZoom\":6}",
+    "timestamp": "2026-10-11T12:36:59.562Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"original\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.65,\"medianFrameMs\":17.6,\"p95FrameMs\":18.8,\"cpuRenderMedianMs\":6.5,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":56.04,\"automaticZoom\":3.979}",
+    "timestamp": "2026-10-11T12:37:04.856Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"original\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.53,\"medianFrameMs\":17.7,\"p95FrameMs\":18.8,\"cpuRenderMedianMs\":4.2,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":55.978,\"automaticZoom\":4.023}",
+    "timestamp": "2026-10-11T12:37:10.161Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"original\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.53,\"medianFrameMs\":17.7,\"p95FrameMs\":18.7,\"cpuRenderMedianMs\":4.7,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":50.004,\"automaticZoom\":9.996}",
+    "timestamp": "2026-10-11T12:37:15.470Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.71,\"medianFrameMs\":17.6,\"p95FrameMs\":18.8,\"cpuRenderMedianMs\":6.7,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":55.762,\"automaticZoom\":4.329}",
+    "timestamp": "2026-10-11T12:37:27.656Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.71,\"medianFrameMs\":17.6,\"p95FrameMs\":18.6,\"cpuRenderMedianMs\":6.9,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":52.019,\"automaticZoom\":7.985}",
+    "timestamp": "2026-10-11T12:37:32.949Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.56,\"medianFrameMs\":17.6,\"p95FrameMs\":18.6,\"cpuRenderMedianMs\":8.4,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":60.119,\"automaticZoom\":0}",
+    "timestamp": "2026-10-11T12:37:38.257Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.58,\"medianFrameMs\":17.6,\"p95FrameMs\":18.9,\"cpuRenderMedianMs\":9.1,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":60.022,\"automaticZoom\":0}",
+    "timestamp": "2026-10-11T12:37:43.559Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.76,\"medianFrameMs\":17.6,\"p95FrameMs\":18.6,\"cpuRenderMedianMs\":8,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":54.376,\"automaticZoom\":5.96}",
+    "timestamp": "2026-10-11T12:37:48.842Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.68,\"medianFrameMs\":17.6,\"p95FrameMs\":18.6,\"cpuRenderMedianMs\":7.2,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":50.015,\"automaticZoom\":9.999}",
+    "timestamp": "2026-10-11T12:37:54.134Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.51,\"medianFrameMs\":17.7,\"p95FrameMs\":18.6,\"cpuRenderMedianMs\":7,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":50.001,\"automaticZoom\":10}",
+    "timestamp": "2026-10-11T12:37:59.442Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  },
+  {
+    "level": "info",
+    "message": "ART_METRICS {\"look\":\"coastal\",\"mode\":\"race\",\"frames\":300,\"meanFps\":56.66,\"medianFrameMs\":17.6,\"p95FrameMs\":18.8,\"cpuRenderMedianMs\":7.3,\"viewport\":[1600,900],\"pixelRatio\":1,\"fov\":50,\"automaticZoom\":10}",
+    "timestamp": "2026-10-11T12:38:04.738Z",
+    "url": "http://127.0.0.1:4173/game/art-metrics.js"
+  }
+]
