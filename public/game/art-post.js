@@ -9,7 +9,7 @@ export class ArtPost {
   const hdr=renderer.capabilities.isWebGL2&&renderer.extensions.has('EXT_color_buffer_float');
   this.target=new T.WebGLRenderTarget(1,1,{type:hdr?T.HalfFloatType:T.UnsignedByteType,depthBuffer:true,samples:renderer.capabilities.isWebGL2?Math.min(ART.post.samples,renderer.capabilities.maxSamples):0});
   this.uniforms={ sceneColor:{value:this.target.texture},texel:{value:new T.Vector2(1,1)},
-   focus:{value:new T.Vector2(0,1)},time:{value:0} };
+   focus:{value:new T.Vector2(0,1)},time:{value:0},speedAmount:{value:0},speedStrength:{value:ART.speedVfx.strength},speedRays:{value:ART.speedVfx.rays},speedColor:{value:new T.Color(ART.speedVfx.color)} };
   for(const key of ['bloom','threshold','blur','contrast','saturation','warm','shadowTint','grain','grainFps','vignette','bloomRadius','blurRadius'])this.uniforms[key]={value:ART.post[key]};
   this.material=new T.ShaderMaterial({uniforms:this.uniforms,depthTest:false,depthWrite:false,
    vertexShader:'varying vec2 uvScreen;void main(){uvScreen=uv;gl_Position=vec4(position.xy,0.0,1.0);}',
@@ -17,6 +17,8 @@ export class ArtPost {
     varying vec2 uvScreen;
     uniform sampler2D sceneColor;
     uniform vec2 texel,focus;
+    uniform float speedAmount,speedStrength,speedRays;
+    uniform vec3 speedColor;
     uniform float time,bloom,threshold,blur,contrast,saturation,warm,shadowTint,grain,grainFps,vignette,bloomRadius,blurRadius;
     float hash(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}
     void main(){
@@ -43,6 +45,14 @@ export class ArtPost {
      vec2 edge=uvScreen*2.0-1.0;
      color*=1.0-vignette*smoothstep(.35,1.5,dot(edge,edge));
      color+=(hash(gl_FragCoord.xy+floor(time*grainFps))- .5)*grain;
+     // Short radial streaks are restricted to the outer frame; racers and HUD stay clear.
+     vec2 ray=uvScreen-vec2(.5,.52);
+     float radius=length(ray),angle=atan(ray.y,ray.x)/6.2831853;
+     float lane=floor((angle+.5)*speedRays),seed=hash(vec2(lane,7.0));
+     float thin=pow(max(0.0,1.0-abs(fract((angle+.5)*speedRays)-.5)*2.0),22.0);
+     float dash=smoothstep(.15,.3,fract(radius*4.0-time*(1.4+seed)+seed))* (1.0-smoothstep(.65,.9,fract(radius*4.0-time*(1.4+seed)+seed)));
+     float border=smoothstep(.34,.62,max(abs(ray.x),abs(ray.y)));
+     color=mix(color,speedColor,thin*dash*border*speedAmount*speedStrength);
      gl_FragColor=vec4(clamp(color,0.0,1.0),1.0);
     }`});
   this.scene=new T.Scene();this.camera=new T.OrthographicCamera(-1,1,1,-1,0,1);

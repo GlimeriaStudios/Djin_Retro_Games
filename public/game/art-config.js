@@ -44,6 +44,9 @@ export const ART = {
  },
  fx: { core: '#FFB040', fire: '#FF6A1A', smoke: '#3A3438', trail: '#D8D2CC',
   spark: '#FFD27A', mine: '#FF2A3A', oil: '#0E0C14', sheen: '#70608b', pickup: '#6AE0F0' },
+ // Speed thresholds in m/s (~65–126 km/h); edge-only lines never move the camera.
+ speedVfx:{startSpeed:18,fullSpeed:35,boost:.25,strength:.18,response:.18,color:'#c6e4dc',rays:42},
+ vehicleDetail:{chrome:'#aaa99f',rubber:'#22242a',glass:'#3a4a52',lamps:'#fff0c9',tail:'#b83a3a',wood:'#79614b',stripe:'#292b36'},
  post: { enabled: true, bloom: .1, threshold: 1.15, emissiveGain:2.5, blur: .3,
   focusPadding: .14, contrast: 1.055, saturation: .97,
   warm: .018, shadowTint: .022, grain: .006, grainFps: 24, vignette: .12,

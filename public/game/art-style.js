@@ -5,6 +5,7 @@ import { surfacePatch, smoothRoadLighting } from './art-shaders.js';
 import { shorelineTexture, islandPalms, naturePatch } from './art-nature.js';
 import { ArtPost } from './art-post.js';
 import { ArtMetrics } from './art-metrics.js';
+import { speedVfxTarget } from './speed-vfx.js';
 
 // Track/FX cleanup releases the source and replacement GPU materials
 // and any original texture replaced by the art pass, without recursive disposal.
@@ -155,7 +156,10 @@ export class ArtStyle {
    this.records.add(object);
   });
  }
- render(scene,camera) {
+ render(scene,camera,car,dt,mode) {
+  const target=speedVfxTarget(car,mode,this.view.reducedMotion,ART.speedVfx);
+  this.speedAmount=mode!=='race'||this.view.reducedMotion||!car?.alive?0:(this.speedAmount||0)+(target-(this.speedAmount||0))*(1-Math.exp(-dt/ART.speedVfx.response));
+  this.post.uniforms.speedAmount.value=this.speedAmount;
   this.metrics.begin(true);
   this.time.value=performance.now()/1000; this.scan();
   if(ART.post.enabled)this.post.render(scene,camera,this.view.cars);

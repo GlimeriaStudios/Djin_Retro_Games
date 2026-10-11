@@ -94,7 +94,7 @@ export class View{
  // Apply vibration after chase smoothing; restore position to prevent accumulation.
  const basePosition=this.camera.position.clone();
  if(mode==='race'&&!this.reducedMotion){this.camera.translateX(this.aerial.shakeX);this.camera.translateY(this.aerial.shakeY);this.camera.rotateZ(this.aerial.shakeRoll);}
- this.artStyle.render(this.scene,this.camera);this.camera.position.copy(basePosition);
+ this.artStyle.render(this.scene,this.camera,g.cars[local],dt,mode);this.camera.position.copy(basePosition);
  }
  groundPoint(clientX,clientY){const ray=new T.Raycaster();ray.setFromCamera(new T.Vector2(clientX/innerWidth*2-1,-clientY/innerHeight*2+1),this.camera);const p=new T.Vector3();return ray.ray.intersectPlane(new T.Plane(new T.Vector3(0,1,0),0),p)?{x:p.x,z:p.z}:null;}
 }
