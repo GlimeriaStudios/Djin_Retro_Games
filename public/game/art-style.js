@@ -3,6 +3,7 @@ import { ART } from './art-config.js';
 import { grungeTexture, abstractSignTexture } from './art-textures.js';
 import { surfacePatch } from './art-shaders.js';
 import { shorelineTexture, islandPalms, naturePatch } from './art-nature.js';
+import { ArtPost } from './art-post.js';
 
 // Materials and lighting are the only mutable scene state owned by this pass.
 // Original materials stay available so F9 restores the complete old appearance.
@@ -12,6 +13,7 @@ export class ArtStyle {
   this.cache = new WeakMap(); this.time = { value: 0 };
   this.grunge = grungeTexture(); this.sign = abstractSignTexture();
   this.shore = {value:null};
+  this.post = new ArtPost(view.renderer);
   const scene = view.scene;
   this.sun = scene.children.find(o => o.isDirectionalLight);
   this.ambient = scene.children.find(o => o.isHemisphereLight);
@@ -58,6 +60,7 @@ export class ArtStyle {
  role(object) {
   for (let node=object; node; node=node.parent) {
    if (this.view.cars.includes(node)) return 'vehicle';
+   if (this.view.pickups?.includes(node)) return 'pickup';
    if (node.userData.artRole) return node.userData.artRole;
   }
   if (object.geometry?.type === 'ConeGeometry' && !object.castShadow) return 'rock';
@@ -70,6 +73,23 @@ export class ArtStyle {
   if (!original.isMeshToonMaterial) {
    if(role==='building' && original.isMeshBasicMaterial && original.map?.isCanvasTexture) {
     const material=original.clone();material.map=this.sign;return material;
+   }
+   if(original.isMeshBasicMaterial && !original.map) {
+    const hex=original.color.getHexString(),f=ART.fx;
+    const colors={'ffdd83':f.core,'ff7449':f.fire,'fff0c9':f.spark,'ffdba1':f.trail,'d5cab1':ART.palette.dust,'ffd86c':f.core,'ad8bff':f.sheen,'ff5fa0':f.mine,'323a3e':f.oil};
+    if(colors[hex]||role==='pickup'){
+     const m=original.clone();m.color.set(role==='pickup'?f.pickup:colors[hex]);
+     if(['ffdd83','ff7449','fff0c9','ffd86c','ff5fa0'].includes(hex)||role==='pickup')m.color.multiplyScalar(ART.post.emissiveGain);
+     if(hex==='ff7449'){
+      m.customProgramCacheKey=()=> 'grayline-fire-smoke';
+      m.onBeforeCompile=shader=>{
+       shader.uniforms.artSmoke={value:new T.Color(f.smoke)};
+       shader.fragmentShader='uniform vec3 artSmoke;\n'+shader.fragmentShader;
+       shader.fragmentShader=shader.fragmentShader.replace('#include <opaque_fragment>','outgoingLight=mix(outgoingLight,artSmoke,pow(1.0-opacity,2.0));\n#include <opaque_fragment>');
+      };
+     }
+     return m;
+    }
    }
    return original;
   }
@@ -90,7 +110,8 @@ export class ArtStyle {
   if (role === 'rock') m.color.set(palette.rock);
   if (role === 'road' && hex==='777e91') m.map=null; // Preserve gravel aggregate; replace only asphalt noise.
   if (role === 'water') {m.map=null;m.color.set(palette.shallow);}
-  if (role === 'foliage') {m.roughness=.6;m.metalness=0;}
+  if (role === 'foliage') {m.roughness=ART.material.foliageRoughness;m.metalness=0;}
+  if (hex==='30284c') {m.color.set(ART.fx.oil);m.roughness=ART.material.oilRoughness;}
   if (hex === '3a4a52') m.roughness = ART.material.glassRoughness;
   let car=object;while(car && !this.view.cars.includes(car))car=car.parent;
   this.patch(m, role, car?.position);
@@ -105,9 +126,11 @@ export class ArtStyle {
    shader.uniforms.artRim = {value:new T.Color(ART.rim.color)};
    shader.uniforms.artRimStrength = {value:rim};
    shader.uniforms.artRimPower = {value:ART.rim.power};
-   shader.fragmentShader = 'uniform vec3 artRim; uniform float artRimStrength; uniform float artRimPower;\n'+shader.fragmentShader;
+   shader.uniforms.artBloomLimit = {value:ART.post.threshold};
+   shader.uniforms.artEmissiveGain = {value:ART.post.emissiveGain};
+   shader.fragmentShader = 'uniform vec3 artRim; uniform float artRimStrength; uniform float artRimPower; uniform float artBloomLimit; uniform float artEmissiveGain;\n'+shader.fragmentShader;
    shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>',
-    'outgoingLight += artRim * artRimStrength * pow(1.0 - max(dot(normal, normalize(vViewPosition)), 0.0), artRimPower);\n#include <opaque_fragment>');
+    'outgoingLight += artRim * artRimStrength * pow(1.0 - max(dot(normal, normalize(vViewPosition)), 0.0), artRimPower);\noutgoingLight=min(max(outgoingLight-totalEmissiveRadiance,0.0),vec3(artBloomLimit)) + totalEmissiveRadiance*artEmissiveGain;\n#include <opaque_fragment>');
   };
  }
  scan() {
@@ -127,5 +150,9 @@ export class ArtStyle {
    }
   });
  }
- render(scene,camera) { this.time.value=performance.now()/1000; this.scan(); this.view.renderer.render(scene,camera); }
+ render(scene,camera) {
+  this.time.value=performance.now()/1000; this.scan();
+  if(this.enabled&&ART.post.enabled)this.post.render(scene,camera,this.view.cars);
+  else this.view.renderer.render(scene,camera);
+ }
 }

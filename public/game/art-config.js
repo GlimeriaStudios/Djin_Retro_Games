@@ -16,7 +16,7 @@ export const ART = {
   foliage: '#3F8A4A', leafLight: '#7CC45A', trunk: '#8A6A52',
   shallow: '#3FB0C0', deep: '#2A5A90', foam: '#edf2df',
  },
- material: { roughness: .82, metalness: .06, glassRoughness: .22, diffuseFill: .58 },
+ material: { roughness: .82, metalness: .06, glassRoughness: .22, foliageRoughness:.6, oilRoughness:.12, diffuseFill: .58 },
  rim: { color: '#FFC27A', vehicle: .34, nature: .16, building: .035, power: 2.4 },
  grunge: {
   enabled: true, vehicle: .42, building: .68, road: .6,
@@ -37,7 +37,8 @@ export const ART = {
  },
  fx: { core: '#FFB040', fire: '#FF6A1A', smoke: '#3A3438', trail: '#D8D2CC',
   spark: '#FFD27A', mine: '#FF2A3A', oil: '#0E0C14', sheen: '#70608b', pickup: '#6AE0F0' },
- post: { enabled: true, bloom: .1, threshold: 1.15, blur: .3,
+ post: { enabled: true, bloom: .1, threshold: 1.15, emissiveGain:2.5, blur: .3,
   focusPadding: .14, contrast: 1.055, saturation: .97,
-  warm: .018, shadowTint: .022, grain: .006, grainFps: 24, vignette: .12 },
+  warm: .018, shadowTint: .022, grain: .006, grainFps: 24, vignette: .12,
+  bloomRadius:3, blurRadius:1.4, samples:4 },
 };
