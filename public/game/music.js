@@ -28,7 +28,11 @@ export class RaceMusic{
   // Rebase after suspension rather than scheduling a burst of missed notes.
   if(this.origin+this.next<this.ctx.currentTime-.2)this.origin=this.ctx.currentTime+.05-this.next;
   while(this.origin+this.next<this.ctx.currentTime+.18){
-   if(!this.events?.length)this.events=scoreEvents(this.bar++);
+   if(!this.events?.length){
+    this.events=scoreEvents(this.bar++);
+    // Authored rests may span an entire bar; advance time without inventing a note.
+    if(!this.events.length){this.next=this.bar*4*beat;continue;}
+   }
    const e=this.events[0];if(this.origin+e.time>this.ctx.currentTime+.18){this.next=e.time;break;}
    this.events.shift();this.play(e,this.origin+e.time);this.next=this.events[0]?.time??this.bar*4*beat;
   }

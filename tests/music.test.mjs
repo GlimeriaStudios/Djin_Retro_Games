@@ -15,3 +15,8 @@ test('scheduler is silent while muted, resumes without a burst, and restarts on 
  music.schedule();assert.equal(music.played.length,0);music.enabled=true;music.schedule();assert.ok(music.played.length>0);
  music.ctx.currentTime=60;music.schedule();assert.ok(music.played.at(-1).t>=60);music.setActive(false);music.setActive(true);assert.equal(music.bar,0);assert.equal(music.next,0);assert.equal(music.events.length,0);
 });
+test('live scheduler traverses every rest and two complete loops without losing notes',()=>{
+ const music=Object.create(RaceMusic.prototype);Object.assign(music,{ctx:{currentTime:0,state:'running'},active:true,enabled:true,origin:.12,next:0,bar:0,events:[],played:[],play(e,t){this.played.push({e,t});}});
+ const duration=114.871904;for(let t=0;t<duration*2;t+=.025){music.ctx.currentTime=t;music.schedule();}
+ const firstTwo=music.played.filter(p=>p.e.time<duration*2);assert.equal(firstTwo.length,1476*2);assert.ok(firstTwo.every((p,i)=>!i||p.t>=firstTwo[i-1].t));
+});

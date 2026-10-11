@@ -52,3 +52,12 @@ h1{text-shadow:4px 4px 0 #b75247,8px 8px 0 #231e31}h1 em{color:#ffbd61}.vignette
 .driver{background:#292536e8;border-radius:0;box-shadow:3px 3px #13132188;border-bottom:2px solid #796679}.race-top span{background:#30283de8;border-radius:0}.weapon{background:#292538ed;border-radius:0;box-shadow:5px 5px #17162388}.speed strong{text-shadow:3px 3px #a94d48}.speedbar{border-radius:0}.track-caption{background:#30283de8;border-color:#ffbc60;box-shadow:6px 6px #19172588}.track-caption p{color:#e3bca4}
 #minimap{background:#30283dcc;border-color:#d79b76;border-radius:0}#centerTitle{text-shadow:4px 4px #803e4d,7px 7px #252036}.panel,dialog,#voicePanel{background:#2c263bed;border-color:#c29487;border-radius:0}#intel{background:#30283de8;border-radius:0}.room-ticket{background:#221e32}#toast{background:#30283ded;border-radius:0}
 #touch button{background:#342e45eb;border-color:#e6bb9799}#touch .touch-gas{background:#edaa57ed;color:#2e2437}#touch button.held{background:#ffd18c;color:#292236}
+
+/* Tilt sits above the left thumb buttons, away from the pedals and race HUD. */
+#tiltControls{display:none;position:absolute;left:max(18px,env(safe-area-inset-left));bottom:112px;width:142px;z-index:9;pointer-events:auto}
+.tilt-actions{display:flex;gap:5px}#tiltControls button{font:9px var(--mono);min-height:38px;padding:8px;border:1px solid #e6bb9799;background:#342e45eb;touch-action:manipulation}#tiltToggle[aria-pressed="true"]{background:#edaa57;color:#292236}
+#tiltStatus{font:9px/1.4 var(--mono);margin:6px 0 0;color:#fff0d1;text-shadow:0 1px 3px #000}
+.tilt-meter{height:4px;width:110px;margin:7px auto;background:#ffffff30;border-radius:3px;position:relative}.tilt-meter i{display:block;width:8px;height:8px;position:absolute;left:51px;top:-2px;border-radius:50%;background:#ffd18c}
+@media(max-width:600px),(pointer:coarse){body.playing #tiltControls{display:block}}
+@media(max-height:500px) and (max-width:1000px){body.playing #tiltControls{display:block;bottom:112px}}
+@media(max-width:380px){#tiltControls{left:12px;width:124px}#tiltControls button{font-size:8px;padding:7px}}
