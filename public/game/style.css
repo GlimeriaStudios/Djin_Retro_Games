@@ -61,3 +61,7 @@ h1{text-shadow:4px 4px 0 #b75247,8px 8px 0 #231e31}h1 em{color:#ffbd61}.vignette
 @media(max-width:600px),(pointer:coarse){body.playing #tiltControls{display:block}}
 @media(max-height:500px) and (max-width:1000px){body.playing #tiltControls{display:block;bottom:112px}}
 @media(max-width:380px){#tiltControls{left:12px;width:124px}#tiltControls button{font-size:8px;padding:7px}}
+
+/* Drift reserve stays below speed; phone boost fits the unused pedal gap. */
+#boostPanel{margin-top:9px;width:140px;font:8px var(--mono);color:#e6c5ac}#boostPanel label{display:block;margin-bottom:5px}#boostMeter{display:block;appearance:none;width:100%;height:7px;border:0;background:#584c61}#boostMeter::-webkit-progress-bar{background:#584c61}#boostMeter::-webkit-progress-value{background:#eaaa62}#boostMeter::-moz-progress-bar{background:#eaaa62}#boostPanel[data-ready="true"]{color:#81e3d7}#boostPanel[data-ready="true"] #boostMeter::-webkit-progress-value{background:#81e3d7}#touch .touch-boost{width:60px;height:60px;left:0;bottom:140px;border-color:#81e3d7;background:#264c52ed}#touch .touch-boost b{font-size:23px}
+@media(max-width:600px){#boostPanel{width:88px;font-size:7px;margin-top:5px}}@media(max-height:500px) and (orientation:landscape){#boostPanel{width:88px;font-size:7px;margin-top:4px}}

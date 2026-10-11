@@ -33,7 +33,7 @@ export async function POST(request:Request) {
       await db.prepare("UPDATE seats SET token='',name='',updated=0,input='{}',voice='{}' WHERE room=? AND token=?").bind(code,token).run(); return reply({ok:true});
     }
     if(b.action!=='sync')return reply({error:'Unknown action'},400);
-    const i=b.input||{},input={throttle:Math.max(-1,Math.min(1,Number(i.throttle)||0)),steer:Math.max(-1,Math.min(1,Number(i.steer)||0)),brake:!!i.brake,drift:!!i.drift,fire:!!i.fire,reset:!!i.reset,seq:Number(i.seq)||0};
+    const i=b.input||{},input={throttle:Math.max(-1,Math.min(1,Number(i.throttle)||0)),steer:Math.max(-1,Math.min(1,Number(i.steer)||0)),brake:!!i.brake,drift:!!i.drift,boost:!!i.boost,fire:!!i.fire,reset:!!i.reset,seq:Number(i.seq)||0};
     const ops=[db.prepare('UPDATE seats SET input=?,updated=? WHERE room=? AND token=?').bind(JSON.stringify(input),now,code,token)];
     if(b.voice!==undefined){
       const v=b.voice;

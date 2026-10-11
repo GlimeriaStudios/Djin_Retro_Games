@@ -1,5 +1,6 @@
 import {decorateTrack,alignSurface,constrainObstacles,blockedPoint,impactCamera} from './terrain.js';
 import {integrateVehicle,VEHICLE} from './vehicle.js';
+import {updateBoost} from './boost.js';
 // GRAYLINE simulation. Metres, seconds; independent of rendering and networking.
 export const COLORS=['#ffb44a','#65c9ed','#ec809f','#b6dd77'];
 // Seconds/metres: allow roughly a lap to settle in, then give a spun-out car
@@ -76,7 +77,7 @@ export function makeGame(config=DEFAULT_TRACK){const track=buildTrack(config);re
 function event(g,type,x,z,extra={}){g.events.push({id:++g.eventId,type,x,z,time:g.time,...extra});if(g.events.length>25)g.events.shift();}
 export function startRound(g,reset=false){if(reset){g.cars.forEach(c=>c.score=0);g.round=0;g.winner=-1;}g.round++;g.phase='countdown';g.phaseTime=3;g.raceTime=0;g.roundWinner=-1;g.shots=[];g.hazards=[];g.pickups=g.track.config.pickups.map((p,i)=>({...p,id:i,cooldown:0,...g.track.at(p.s*g.track.length,p.lane)}));
  const start=(g.round-1)*g.track.length*.19;
- for(const c of g.cars){const s=start-4-Math.floor(c.id/2)*6,p=g.track.at(s,c.id%2?3:-3);Object.assign(c,{x:p.x,z:p.z,y:p.y,a:p.angle,vx:0,vz:0,omega:0,hp:100,alive:true,fall:0,weapon:null,ammo:0,cooldown:0,boost:0,oil:0,progress:s,lastS:((s%g.track.length)+g.track.length)%g.track.length,behind:0,off:0,shield:1.5,resetCd:0,stuck:0,fireHeld:false,reason:'',slip:0,lateralAccel:0,longitudinalAccel:0,steeringAngle:0,tireUsage:0,frontLoad:.52,rearLoad:.48,steer:0,drifting:false,driftDirection:0,driftBlend:0,impactTime:0,cameraKick:0,trackPitch:0,trackRoll:0,inputSeq:0});alignSurface(c,g.track);}
+ for(const c of g.cars){const s=start-4-Math.floor(c.id/2)*6,p=g.track.at(s,c.id%2?3:-3);Object.assign(c,{x:p.x,z:p.z,y:p.y,a:p.angle,vx:0,vz:0,omega:0,hp:100,alive:true,fall:0,weapon:null,ammo:0,cooldown:0,boost:0,boostCharge:0,boostHeld:false,oil:0,progress:s,lastS:((s%g.track.length)+g.track.length)%g.track.length,behind:0,off:0,shield:1.5,resetCd:0,stuck:0,fireHeld:false,reason:'',slip:0,lateralAccel:0,longitudinalAccel:0,steeringAngle:0,tireUsage:0,frontLoad:.52,rearLoad:.48,steer:0,drifting:false,driftDirection:0,driftBlend:0,impactTime:0,cameraKick:0,trackPitch:0,trackRoll:0,inputSeq:0});alignSurface(c,g.track);}
 }
 function botTarget(g,c,near,speed){let lane=(c.id-1.5)*1.5;const look=9+speed*.6;const block=g.track.obstacles.find(b=>{const d=(b.s*g.track.length-near.s+g.track.length)%g.track.length;return d<look+12;});if(block){const width=g.track.at(block.s*g.track.length).width;const left=block.lane-block.w/2-2.4,right=block.lane+block.w/2+2.4;lane=right<width/2-1.8?right:left;}return g.track.at(near.s+look,clamp(lane,-near.width/2+2,near.width/2-2));}
 export function botInput(g,c){const speed=Math.hypot(c.vx,c.vz),near=g.track.nearest(c.x,c.z),p=botTarget(g,c,near,speed),target=Math.atan2(p.x-c.x,p.z-c.z),diff=angleDiff(target,c.a),ahead=g.track.at(near.s+23),bend=Math.abs(angleDiff(ahead.angle,near?Math.atan2(near.tx,near.tz):c.a));let throttle=speed>(bend>.8?11:bend>.4?16:27)?-.65:1;
@@ -89,7 +90,7 @@ export function drive(c,input,dt,track){
  if(!c.alive){if(c.fall){c.fall+=dt;c.y=(c.fallStart||0)-5*c.fall*c.fall;c.a+=dt*1.4;}return;}
  c.cooldown=Math.max(0,c.cooldown-dt);c.boost=Math.max(0,c.boost-dt);c.oil=Math.max(0,c.oil-dt);c.shield=Math.max(0,c.shield-dt);c.resetCd=Math.max(0,c.resetCd-dt);
  const grade=alignSurface(c,track);if(Math.hypot(c.vx,c.vz)>.5||Math.abs(input.throttle||0)>.1){c.vx-=9.81*grade.sx*dt;c.vz-=9.81*grade.sz*dt;}
- integrateVehicle(c,input,dt,track.config);constrainObstacles(c,track);alignSurface(c,track);
+ integrateVehicle(c,input,dt,track.config);updateBoost(c,input,dt);constrainObstacles(c,track);alignSurface(c,track);
  const near=track.nearest(c.x,c.z),half=near.width/2;let delta=near.s-c.lastS;if(delta>track.length/2)delta-=track.length;if(delta<-track.length/2)delta+=track.length;if(Math.abs(delta)<10)c.progress+=delta;c.lastS=near.s;
  // Most of the circuit has concrete barriers; two exposed outside edges reward precision.
  const exposed=exposedAt(track,near.s);
