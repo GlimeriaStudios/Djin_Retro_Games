@@ -6,7 +6,8 @@ export const ART = {
   sun: '#FFD3A0', intensity: 2.15, elevation: 15, distance: 160,
   sky: '#FFB070', ground: '#4A3A6A', ambient: 2.05,
   background: '#d8a29d', fogNear: 150, fogFar: 440, exposure: 1.0,
-  shadowExtent: 190, shadowFar: 420, shadowBias: -.0005, shadowNormalBias: .08,
+  // Shadow volume covers the existing race camera's complete range, in metres.
+  shadows:true, shadowExtent: 190, shadowFar: 420, shadowBias: -.0008, shadowNormalBias: .12,
  },
  palette: {
   road: '#4A4650', gravel: '#bca27e', kerbRed: '#B83A3A', kerbCream: '#D8D0C4',
@@ -16,7 +17,7 @@ export const ART = {
   foliage: '#3F8A4A', leafLight: '#7CC45A', trunk: '#8A6A52',
   shallow: '#3FB0C0', deep: '#2A5A90', foam: '#edf2df',
  },
- material: { roughness: .82, metalness: .06, glassRoughness: .22, foliageRoughness:.6, oilRoughness:.12, diffuseFill: .58 },
+ material: { roughness: .82, metalness: .06, glassRoughness: .22, foliageRoughness:.6, oilRoughness:.12, diffuseFill: .58, smoothRoadNormals:true },
  // Keys are original material colours, so overrides do not rename model systems.
  surfaceOverrides: {
   '3a4a52':{roughness:.22,grunge:.10}, // Vehicle glass: retain a little dust and gloss.

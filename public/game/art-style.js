@@ -1,10 +1,26 @@
 import * as T from './vendor/three.module.js';
 import { ART } from './art-config.js';
 import { grungeTexture, abstractSignTexture } from './art-textures.js';
-import { surfacePatch } from './art-shaders.js';
+import { surfacePatch, smoothRoadLighting } from './art-shaders.js';
 import { shorelineTexture, islandPalms, naturePatch } from './art-nature.js';
 import { ArtPost } from './art-post.js';
 import { ArtMetrics } from './art-metrics.js';
+
+// Track/FX cleanup can occur in either look. Release both GPU material variants
+// and any original texture replaced by the art pass, without recursive disposal.
+function linkDisposal(original, styled) {
+ let releasing=false;
+ const release=other=>{
+  if(releasing)return;
+  releasing=true;
+  other.dispose();
+  if(original.map!==styled.map)original.map?.dispose();
+  releasing=false;
+ };
+ original.addEventListener('dispose',()=>release(styled));
+ styled.addEventListener('dispose',()=>release(original));
+ return styled;
+}
 
 // Materials and lighting are the only mutable scene state owned by this pass.
 // Original materials stay available so F9 restores the complete old appearance.
@@ -22,7 +38,7 @@ export class ArtStyle {
   this.original = {
    background: scene.background.clone(), fog: scene.fog.clone(),
    exposure: view.renderer.toneMappingExposure,
-   sun: this.sun.color.clone(), intensity: this.sun.intensity, position: this.sun.position.clone(),
+   sun: this.sun.color.clone(), intensity: this.sun.intensity, position: this.sun.position.clone(), castShadow:this.sun.castShadow,
    sky: this.ambient.color.clone(), ground: this.ambient.groundColor.clone(), ambient: this.ambient.intensity,
    shadow: { left: this.sun.shadow.camera.left, right: this.sun.shadow.camera.right,
     top: this.sun.shadow.camera.top, bottom: this.sun.shadow.camera.bottom,
@@ -47,6 +63,7 @@ export class ArtStyle {
   v.renderer.toneMappingExposure = this.enabled ? light.exposure : old.exposure;
   this.sun.color.copy(this.enabled ? new T.Color(light.sun) : old.sun);
   this.sun.intensity = this.enabled ? light.intensity : old.intensity;
+  this.sun.castShadow=this.enabled?light.shadows:old.castShadow;
   const elevation = light.elevation * Math.PI / 180;
   if (this.enabled) this.sun.position.set(-Math.cos(elevation)*light.distance*.8, Math.sin(elevation)*light.distance, Math.cos(elevation)*light.distance*.6);
   else this.sun.position.copy(old.position);
@@ -77,13 +94,15 @@ export class ArtStyle {
    // Preserve the existing 5 × 1.4 m chevrons: wayfinding is gameplay-critical.
    const wayfinding=object.geometry?.parameters?.width===5&&object.geometry?.parameters?.height===1.4;
    if(role==='building' && !wayfinding && original.isMeshBasicMaterial && original.map?.isCanvasTexture) {
-    const material=original.clone();material.map=this.sign;return material;
+    const material=original.clone();material.map=this.sign;
+    return linkDisposal(original,material);
    }
    if(original.isMeshBasicMaterial && !original.map) {
     const hex=original.color.getHexString(),f=ART.fx;
     const colors={'ffdd83':f.core,'ff7449':f.fire,'fff0c9':f.spark,'ffdba1':f.trail,'d5cab1':ART.palette.dust,'ffd86c':f.core,'ad8bff':f.sheen,'ff5fa0':f.mine,'323a3e':f.oil};
     if(colors[hex]||role==='pickup'){
      const m=original.clone();m.color.set(role==='pickup'?f.pickup:colors[hex]);
+     linkDisposal(original,m);
      if(['ffdd83','ff7449','fff0c9','ffd86c','ff5fa0'].includes(hex)||role==='pickup')m.color.multiplyScalar(ART.post.emissiveGain);
      if(hex==='ff7449'){
       m.customProgramCacheKey=()=> 'grayline-fire-smoke';
@@ -106,6 +125,8 @@ export class ArtStyle {
    depthWrite: original.depthWrite, emissive: original.emissive,
    emissiveIntensity: original.emissiveIntensity, roughness: ART.material.roughness,
    metalness: ART.material.metalness });
+  // Rebuilding a track must release programs for both A/B material variants.
+  linkDisposal(original,m);
   const hex=original.color.getHexString(), palette=ART.palette;
   const remap={ '777e91':palette.road, 'd8ac70':palette.gravel, 'c85746':palette.kerbRed,
    'c84a49':palette.kerbRed, 'fff0cd':palette.kerbCream, 'f2d5a2':palette.kerbCream,
@@ -145,6 +166,7 @@ export class ArtStyle {
    let record = this.records.get(object);
    if (!record) {
     const original = object.material, role=this.role(object);
+    if(role==='road'&&ART.material.smoothRoadNormals)smoothRoadLighting(object.geometry);
     record={original,styled:Array.isArray(original)?original.map(m=>this.material(m,role,object)):this.material(original,role,object)};
     this.records.set(object,record);
    }
