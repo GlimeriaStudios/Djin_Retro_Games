@@ -2,6 +2,7 @@ import * as T from './vendor/three.module.js';
 import { ART } from './art-config.js';
 import { grungeTexture, abstractSignTexture } from './art-textures.js';
 import { surfacePatch } from './art-shaders.js';
+import { shorelineTexture, islandPalms, naturePatch } from './art-nature.js';
 
 // Materials and lighting are the only mutable scene state owned by this pass.
 // Original materials stay available so F9 restores the complete old appearance.
@@ -10,6 +11,7 @@ export class ArtStyle {
   this.view = view; this.enabled = ART.enabled; this.records = new WeakMap();
   this.cache = new WeakMap(); this.time = { value: 0 };
   this.grunge = grungeTexture(); this.sign = abstractSignTexture();
+  this.shore = {value:null};
   const scene = view.scene;
   this.sun = scene.children.find(o => o.isDirectionalLight);
   this.ambient = scene.children.find(o => o.isHemisphereLight);
@@ -28,7 +30,12 @@ export class ArtStyle {
    e.preventDefault(); this.setEnabled(!this.enabled);
   });
  }
- setEnabled(enabled) { this.enabled = enabled; this.applyLighting(); this.scan(); }
+ setEnabled(enabled) { this.enabled = enabled; this.applyLighting(); this.scan(); if(this.nature)this.nature.visible=enabled&&ART.nature.palms; }
+ rebuild(track) {
+  this.shore.value?.dispose();this.shore.value=shorelineTexture(track);
+  if(this.nature){this.view.scene.remove(this.nature);this.nature.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});}
+  this.nature=islandPalms();this.nature.visible=this.enabled&&ART.nature.palms;this.view.scene.add(this.nature);
+ }
  applyLighting() {
   const v = this.view, old = this.original, light = ART.lighting;
   v.scene.background.copy(this.enabled ? new T.Color(light.background) : old.background);
@@ -81,17 +88,20 @@ export class ArtStyle {
    'afbd9d':palette.sand, '4a7d7f':palette.rockShade };
   if (role !== 'vehicle' && remap[hex]) m.color.set(remap[hex]);
   if (role === 'rock') m.color.set(palette.rock);
-  if (role === 'road') m.map=null; // Replace baked colour noise with world-space asphalt detail.
+  if (role === 'road' && hex==='777e91') m.map=null; // Preserve gravel aggregate; replace only asphalt noise.
+  if (role === 'water') {m.map=null;m.color.set(palette.shallow);}
+  if (role === 'foliage') {m.roughness=.6;m.metalness=0;}
   if (hex === '3a4a52') m.roughness = ART.material.glassRoughness;
   let car=object;while(car && !this.view.cars.includes(car))car=car.parent;
   this.patch(m, role, car?.position);
   cache.set(role,m); return m;
  }
  patch(material, role, origin) {
-  const rim = role==='vehicle'?ART.rim.vehicle:role==='rock'?ART.rim.nature:ART.rim.building;
+  const rim = role==='vehicle'?ART.rim.vehicle:['rock','foliage'].includes(role)?ART.rim.nature:ART.rim.building;
   material.customProgramCacheKey = () => 'grayline-art-v1-'+role;
   material.onBeforeCompile = shader => {
    surfacePatch(shader,role,this.grunge,origin);
+   if(ART.nature.enabled)naturePatch(shader,role,this.time,this.shore);
    shader.uniforms.artRim = {value:new T.Color(ART.rim.color)};
    shader.uniforms.artRimStrength = {value:rim};
    shader.uniforms.artRimPower = {value:ART.rim.power};
