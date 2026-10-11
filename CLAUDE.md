@@ -8,7 +8,7 @@ in the distributed ZIP for exact file hashes. This ZIP is a snapshot, not a live
 
 ## User intent and non-negotiable behaviour
 
-- Mashed-inspired four-player browser combat racing. Original code/art/audio.
+- Mashed-inspired four-player browser combat racing. Original code/art; user-supplied race MIDI.
 - Keep personal spring chase: each browser follows its own car only, never the pack.
 - Camera has subtle helicopter/operator wander, delayed banking and occasional bumps.
 - Read road turns ahead; downhill makes the angle more horizontal, uphill steeper.
@@ -44,7 +44,7 @@ in the distributed ZIP for exact file hashes. This ZIP is a snapshot, not a live
 | art.js | Toon materials, four car variants, scenery, pickups and combat FX |
 | peer.js / prediction.js / network-motion.js | WebRTC, local replay, remote interpolation |
 | voice.js | Separate opt-in WebRTC audio mesh |
-| music.js | Original synthesized 96 BPM C-minor funk and public-domain Fifth motif |
+| music.js | Supplied 117 BPM race MIDI v2, converted score and Web Audio instrument playback |
 | touch.js / style.css / index.html | Input ownership and responsive game UI |
 | app/api/room/route.ts | D1 room API, seats, signalling, HTTPS fallback |
 | lib/turn.ts | Server-only short-lived Cloudflare TURN credentials |
@@ -108,3 +108,5 @@ Latest included continuation: October 11 retro weapon hazard bands, rocket fins,
 Surface feedback: optional terrain node `surface` is `asphalt` (legacy default) or `gravel`, applying to the outgoing segment. Nodes 02 and 03 default to gravel. Physics `alignSurface` samples the same section as the mesh, sets car.surface; cameraKick is a bounded collision envelope decayed by integrateVehicle and reset on recovery/rounds. aerialCamera generates speed/load-based high-frequency offsets applied after chase smoothing and restored after render. Motion Low zeroes them. Keep audio independent. Coverage: tests/surfaces.test.mjs.
 
 Race pacing uses shared RACE_RULES: 120-second round cap; trailing elimination starts after 45 seconds, requires a gap over 120 metres for 10 continuous seconds. Catching up clears the countdown. Last-survivor victories and first-to-six scoring are retained.
+
+Music update: scripts/import-race-midi.mjs converts the checked-in MIDI into race-score.js. All 1,476 notes, velocities and durations are retained. Parts: bass, rhythm guitar, electric piano, theme strings, violins, violas, cellos, drums (kick/snare/closed and open hats/crash). Timing is exact MIDI tempo 512821 microseconds/beat; loop is 56 bars. tests/music.test.mjs validates source hash, note fidelity, loop timing and mute/resume scheduling. A full browser OfflineAudioContext render measured peak 0.4943 and zero clipped samples.

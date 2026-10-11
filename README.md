@@ -101,7 +101,7 @@ No host migration: keep the host tab open and foreground.
 - Mashed: close combat, short survival rounds and weapon pickups.
 - Road Rash II: retro roadside graphics and strong colour separation.
 - Carmageddon: aggressive original armored car silhouettes.
-- Original synthesized C-minor funk; public-domain Beethoven Fifth motif, no sampled recording.
+- Supplied race theme v2 MIDI: 117 BPM, C minor, eight instrument parts rendered by Web Audio; no sampled recording.
 
 Source references: https://manuals.sega.com/genesismini/pdf/ROAD_RASH_II.pdf
 and https://www.mobygames.com/game/367/carmageddon/promo/group-29408/image-280742/
@@ -113,3 +113,5 @@ The default course has a gravel zone from node 02 through node 04, covering the 
 Gravel adds speed-dependent camera bumps; lateral cornering load adds lighter vibration on either surface. Car, wall, solid obstacle and weapon impacts produce short force-dependent jolts. Reduced Motion disables the added camera effects. Surface changes do not alter tire grip.
 
 Race pacing uses shared RACE_RULES: 120-second round cap; trailing elimination starts after 45 seconds, requires a gap over 120 metres for 10 continuous seconds. Catching up clears the countdown. Last-survivor victories and first-to-six scoring are retained.
+
+Race music source: `public/game/audio/grayline-race-theme-v2.mid`. Regenerate its browser score with `node scripts/import-race-midi.mjs`. The 56-bar arrangement loops every 114.871904 seconds and starts from the beginning on entering a race. MUSIC remains opt-in and separate from engine/weapon sounds. MIDI specifies performance data; the browser synthesizer supplies the instrument timbres.
