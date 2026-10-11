@@ -1,0 +1,23 @@
+<!doctype html><title>Voice transport verification</title><button id="run">Test four audio peers</button><pre id="result">Ready. Synthetic audio only; no microphone access.</pre><script type="module">
+import {VoiceChat} from '/game/voice.js';
+import {DEFAULT_TRACK} from '/game/sim.js';
+const out=document.getElementById('result');
+document.getElementById('run').onclick=async()=>{
+ const peers=[],rooms=[],contexts=[];let timer;
+ const api=async b=>{const r=await fetch('/api/room',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(b)});if(!r.ok)throw Error('Room API '+r.status);return r.json();};
+ try{
+ document.getElementById('run').disabled=true;out.textContent='Connecting four independent audio peers through the room API…';
+ rooms.push(await api({action:'create',name:'Voice QA 0',config:DEFAULT_TRACK}));for(let i=1;i<4;i++)rooms.push(await api({action:'join',code:rooms[0].code,name:'Voice QA '+i}));
+ for(let i=0;i<4;i++){const ctx=new AudioContext(),osc=ctx.createOscillator(),dest=ctx.createMediaStreamDestination();osc.frequency.value=220+i*110;osc.connect(dest);osc.start();await ctx.resume();contexts.push(ctx);const v=new VoiceChat(i);v.testStream=dest.stream;for(let j=0;j<4;j++)v.muted.add(j);peers.push(v);}
+ const sync=async()=>{for(let i=0;i<4;i++){const r=await api({action:'sync',...rooms[i],voice:peers[i].payload});peers[i].update(r.players);}};
+ const end=Date.now()+25000;let all=false;while(Date.now()<end){await sync();all=peers.every(v=>v.links.size===3&&[...v.links.values()].every(l=>l.pc.connectionState==='connected'));if(all)break;await new Promise(r=>setTimeout(r,350));}
+ if(!all)throw Error('Not all twelve directed audio links connected');
+ for(const v of peers){v.stream=v.testStream;await Promise.all([...v.links.values()].map(l=>l.sender.replaceTrack(v.stream.getAudioTracks()[0])));}
+ await new Promise(r=>setTimeout(r,1800));let streams=0;for(const v of peers)for(const l of v.links.values()){const stats=await l.pc.getStats();if([...stats.values()].some(s=>s.type==='inbound-rtp'&&s.kind==='audio'&&s.bytesReceived>0))streams++;}
+ if(streams!==12)throw Error('Audio packets received on '+streams+'/12 links');
+ const track=peers[0].stream.getAudioTracks()[0];peers[0].stopMic();if(track.readyState!=='ended'||peers[0].payload.mic)throw Error('Mic did not stop');
+ peers[1].mute(0);if(peers[1].links.get(0).audio.muted)throw Error('Unmute failed');peers[1].mute(0);if(!peers[1].links.get(0).audio.muted)throw Error('Mute failed');
+ out.textContent='PASS: 4 peers, 12 receiving audio links, real SDP through room API, microphone track stopped, per-player mute toggled. Synthetic audio only; physical microphones untested.';
+ }catch(e){out.textContent='FAIL: '+e.message;}finally{for(const p of peers)p.close();for(const ctx of contexts)await ctx.close();if(rooms[0])await api({action:'leave',...rooms[0]});document.getElementById('run').disabled=false;}
+};
+</script>

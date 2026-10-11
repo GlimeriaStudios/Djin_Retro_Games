@@ -1,0 +1,15 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {integrateVehicle} from '../public/game/vehicle.js';import {chaseCamera} from '../public/game/chase.js';import {DEFAULT_TRACK} from '../public/game/sim.js';
+const car=(speed=0)=>({x:0,z:0,a:0,vx:0,vz:speed,omega:0});
+const run=(c,input,seconds,dt=1/60)=>{for(let i=0;i<Math.round(seconds/dt);i++)integrateVehicle(c,input,dt,DEFAULT_TRACK);return c;};
+test('stationary steering cannot move or rotate the car',()=>{const c=run(car(),{steer:1},4);assert.equal(c.a,0);assert.equal(c.vx,0);assert.equal(c.vz,0);});
+test('reference acceleration reaches about 70 km/h in 1.5 seconds',()=>{const c=run(car(),{throttle:1},1.5);assert.ok(c.vz>18&&c.vz<21);});
+test('steering eases in and returns faster than it builds',()=>{const c=run(car(20),{steer:1},.1);assert.ok(c.steer>.3&&c.steer<.45);const before=c.steer;run(c,{},.1);assert.ok(c.steer/before<.5);});
+test('brake stops without reversing even with held throttle',()=>{const c=run(car(20),{throttle:1,brake:true},2);assert.equal(c.vz,0);assert.equal(c.vx,0);});
+test('reverse steering changes yaw in the opposite direction',()=>{const a=run(car(5),{steer:.3},.5),b=run(car(-5),{steer:.3},.5);assert.ok(a.a>0);assert.ok(b.a<0);});
+test('lateral grip saturates and oil retains more sideways momentum',()=>{const a={...car(25),vx:10},b={...a,oil:1};run(a,{},.1);run(b,{},.1);assert.ok(a.vx>7&&a.vx<8);assert.ok(b.vx>9);assert.ok(Math.abs(a.lateralAccel)<=28.00001);});
+test('collision spin persists long enough to be visible then settles',()=>{const a={...car(20),omega:2,impactTime:.65},b={...car(20),omega:2};run(a,{},.2);run(b,{},.2);assert.ok(a.omega>b.omega*2);run(a,{},3);assert.ok(Math.abs(a.omega)<.001);});
+test('unpowered sliding loses translational energy',()=>{const c={...car(25),vx:8};const before=Math.hypot(c.vx,c.vz);run(c,{steer:.5},2);assert.ok(Math.hypot(c.vx,c.vz)<before);});
+test('30 and 60 Hz caller integration remains identical',()=>{const a=run(car(10),{steer:.4,throttle:.6},2,1/30),b=run(car(10),{steer:.4,throttle:.6},2,1/60);assert.ok(Math.hypot(a.x-b.x,a.z-b.z)<1e-6);assert.ok(Math.abs(a.a-b.a)<1e-6);});
+test('camera swings gradually around heading and drifts outward',()=>{let s=chaseCamera(null,car(20),0);const c={...car(20),a:.6,omega:1};s=chaseCamera(s,c,.2);assert.ok(s.yaw>0&&s.yaw<.6);assert.ok(s.drift<0);assert.ok(s.speed>0&&s.speed<1);});
+test('camera reset discards old position and angular momentum',()=>{const c={...car(),x:100,z:-50,a:-2};const s=chaseCamera({x:999,yawV:4},c,0,true);assert.equal(s.x,100);assert.equal(s.z,-50);assert.equal(s.yaw,-2);assert.equal(s.yawV,0);});

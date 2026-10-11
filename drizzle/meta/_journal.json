@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1791632663363,
+      "tag": "0000_thick_madame_hydra",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1791633789568,
+      "tag": "0001_living_the_hand",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1791654398004,
+      "tag": "0002_remarkable_odin",
+      "breakpoints": true
+    }
+  ]
+}

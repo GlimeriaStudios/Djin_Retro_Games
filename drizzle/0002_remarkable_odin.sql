@@ -1,0 +1,1 @@
+ALTER TABLE `seats` ADD `voice` text DEFAULT '{}' NOT NULL;

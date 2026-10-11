@@ -1,0 +1,3 @@
+import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core';
+export const rooms = sqliteTable('rooms', { code:text('code').primaryKey(), host:text('host').notNull(), state:text('state').notNull().default('{}'), config:text('config').notNull(), updated:integer('updated').notNull() });
+export const seats = sqliteTable('seats', { room:text('room').notNull(), slot:integer('slot').notNull(), token:text('token').notNull().default(''), name:text('name').notNull().default(''), input:text('input').notNull().default('{}'), updated:integer('updated').notNull().default(0), offer:text('offer').notNull().default('{}'), answer:text('answer').notNull().default('{}'), voice:text('voice').notNull().default('{}') }, t => [primaryKey({columns:[t.room,t.slot]})]);
