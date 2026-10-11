@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {drivingSoundState} from '../public/game/driving-audio.js';
+import {drivingSoundState,DRIVE_SOUND} from '../public/game/driving-audio.js';
 import {speedVfxTarget} from '../public/game/speed-vfx.js';
 import {ART} from '../public/game/art-config.js';
 const car={alive:true,vx:24,vz:0,slip:0,tireUsage:.4,surface:'asphalt'};
@@ -14,7 +14,7 @@ test('audio and speed presentation are bounded, inactive when out, and do not mu
  const frozen=Object.freeze({...car,boost:2,drifting:true});
  for(let speed=0;speed<100;speed++){
   const s=drivingSoundState({...frozen,vx:speed},{throttle:1});
-  assert.ok(Number.isFinite(s.rpm)&&s.rpm>=1100&&s.rpm<=7400);
+  assert.ok(Number.isFinite(s.rpm)&&s.rpm>=DRIVE_SOUND.idleRpm&&s.rpm<=DRIVE_SOUND.redlineRpm+500);
   for(const k of ['squeal','wind','gravel'])assert.ok(s[k]>=0&&s[k]<=1);
  }
  assert.equal(drivingSoundState({...frozen,alive:false}).active,false);

@@ -6,6 +6,7 @@ import { shorelineTexture, islandPalms, naturePatch } from './art-nature.js';
 import { ArtPost } from './art-post.js';
 import { ArtMetrics } from './art-metrics.js';
 import { speedVfxTarget } from './speed-vfx.js';
+import { environmentDetails } from './environment-detail.js';
 
 // Track/FX cleanup releases the source and replacement GPU materials
 // and any original texture replaced by the art pass, without recursive disposal.
@@ -42,6 +43,8 @@ export class ArtStyle {
   this.shore.value?.dispose();this.shore.value=shorelineTexture(track);
   if(this.nature){this.view.scene.remove(this.nature);this.nature.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});}
   this.nature=islandPalms();this.nature.visible=ART.nature.palms;this.view.scene.add(this.nature);
+  if(this.dressing){this.view.scene.remove(this.dressing);this.dressing.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});}
+  this.dressing=environmentDetails(track);this.view.scene.add(this.dressing);
  }
  applyLighting() {
   const v = this.view, light = ART.lighting;

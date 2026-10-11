@@ -1,6 +1,6 @@
 // Procedural exhaust, intake, tyre and road layers. No downloaded sound assets.
 // These values describe audio only: virtual gears never alter vehicle physics.
-export const DRIVE_SOUND={idleRpm:1100,redlineRpm:6900,gearMetresPerSecond:10,
+export const DRIVE_SOUND={idleRpm:850,redlineRpm:6100,gearMetresPerSecond:10,
  master:.32,exhaust:.24,intake:.10,rumble:.12,tyres:.11,gravel:.13,wind:.055,
  attack:.045,release:.12}; // Gains are linear; envelope constants are seconds.
 const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
@@ -25,9 +25,13 @@ export class DrivingAudio{
   this.master.connect(limiter).connect(ctx.destination);
   const buffer=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate),data=buffer.getChannelData(0);
   let seed=1871;for(let i=0;i<data.length;i++){seed=(Math.imul(seed,1664525)+1013904223)>>>0;data[i]=seed/2147483648-1;}
-  // Unequal harmonic weights produce combustion pulses rather than a sawtooth buzz.
-  const real=new Float32Array(17),imag=new Float32Array(17);
-  for(let n=1;n<17;n++)imag[n]=(n%2?1:.55)/Math.pow(n,1.1);
+  // An uneven four-pulse exhaust cycle evokes a cross-plane V8's paired-bank
+  // burble. The oscillator repeats once per crank revolution, in Hz = RPM / 60.
+  const real=new Float32Array(33),imag=new Float32Array(33);
+  for(let n=1;n<33;n++)for(const [phase,weight]of[[0,1],[.22,.75],[.5,.95],[.72,.7]]){
+   const decay=weight/Math.pow(n,.72);
+   real[n]+=Math.cos(2*Math.PI*n*phase)*decay;imag[n]+=Math.sin(2*Math.PI*n*phase)*decay;
+  }
   this.exhaust=this.tone('custom',95,'lowpass',650,DRIVE_SOUND.exhaust,ctx.createPeriodicWave(real,imag));
   this.rumble=this.tone('sine',32,'lowpass',160,DRIVE_SOUND.rumble);
   this.intake=this.noise(buffer,'bandpass',380,.7);
@@ -55,10 +59,10 @@ export class DrivingAudio{
   this.rpm+=(s.rpm-this.rpm)*(1-Math.exp(-Math.min(dt,.1)*12));
   const set=(param,value,seconds=c.attack)=>param.setTargetAtTime(value,t,seconds);
   set(this.master.gain,s.active?c.master:0,c.release);
-  // Four-cylinder, four-stroke firing order: two combustion pulses per revolution.
-  set(this.exhaust.source.frequency,this.rpm/30);
-  set(this.exhaust.filter.frequency,360+this.rpm*.19+s.load*900);
-  set(this.exhaust.gain.gain,c.exhaust*(.5+s.load*.5));
+  // Eight-cylinder, four-stroke engine: four pulses per crank revolution.
+  set(this.exhaust.source.frequency,this.rpm/60);
+  set(this.exhaust.filter.frequency,300+this.rpm*.13+s.load*650);
+  set(this.exhaust.gain.gain,c.exhaust*(.5+s.load*.5)*(1+Math.sin(t*12)*.035));
   set(this.rumble.source.frequency,this.rpm/120);
   set(this.intake.filter.frequency,260+this.rpm*.13);
   set(this.intake.gain.gain,c.intake*(.15+s.load*.85));

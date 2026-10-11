@@ -1,3 +1,4 @@
+import {detailVehicle} from './vehicle-detail.js';
 import {ArtStyle} from './art-style.js';
 import {toon,weaponModel,pickupModel,upgradeCar,sceneryPass,CombatFX} from './art.js';
 import {chaseCamera,raceZoom} from './chase.js';
@@ -15,7 +16,7 @@ export class View{
  this.box(2.05,.14,.55,dark,0,1.35,-1.8,body);this.box(.1,.5,.15,dark,-.8,1.1,-1.8,body);this.box(.1,.5,.15,dark,.8,1.1,-1.8,body);
  const roof=this.label(String(id+1),'#f4eddb','#18242c',.9,.9);roof.rotation.x=-Math.PI/2;roof.position.set(0,1.66,-.25);body.add(roof);
  for(const child of body.children)child.position.y-=.65;body.position.y=.65;
- const marker=new T.Mesh(new T.ConeGeometry(.45,.85,3),this.mat(color,{emissive:color,emissiveIntensity:.25}));marker.rotation.x=Math.PI;marker.position.y=3.7;g.add(marker);g.userData={body,wheels,mount,marker,lastX:0,lastZ:0,roll:0,rollSpeed:0,sway:0,swaySpeed:0};upgradeCar(g,id,color);this.scene.add(g);return g;}
+ const marker=new T.Mesh(new T.ConeGeometry(.45,.85,3),this.mat(color,{emissive:color,emissiveIntensity:.25}));marker.rotation.x=Math.PI;marker.position.y=3.7;g.add(marker);g.userData={body,wheels,mount,marker,lastX:0,lastZ:0,roll:0,rollSpeed:0,sway:0,swaySpeed:0};upgradeCar(g,id,color);detailVehicle(g,id,color);this.scene.add(g);return g;}
  clearGroup(group){for(const obj of [...group.children]){obj.traverse(o=>{o.geometry?.dispose();if(o.material)for(const m of (Array.isArray(o.material)?o.material:[o.material])){m.map?.dispose();m.dispose();}});group.remove(obj);}}
  label(text,background,ink,w,h){const c=document.createElement('canvas');c.width=512;c.height=w===h?512:128;const ctx=c.getContext('2d');ctx.fillStyle=background;ctx.fillRect(0,0,512,c.height);ctx.fillStyle=ink;ctx.font='bold '+(w===h?360:72)+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,256,c.height/2+4);const map=new T.CanvasTexture(c);map.colorSpace=T.SRGBColorSpace;return new T.Mesh(new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({map,side:T.DoubleSide}));}
  surfaceTexture(water=false){const canvas=document.createElement('canvas');canvas.width=canvas.height=256;const ctx=canvas.getContext('2d');ctx.fillStyle=water?'#479a9d':'#969a98';ctx.fillRect(0,0,256,256);let seed=829;for(let i=0;i<6000;i++){seed=(seed*1664525+1013904223)>>>0;const x=(seed>>>16)%256;seed=(seed*1664525+1013904223)>>>0;const y=(seed>>>16)%256;ctx.fillStyle=i%2?'#ffffff09':'#0000000c';ctx.fillRect(x,y,water?12:1,1);}const map=new T.CanvasTexture(canvas);map.wrapS=map.wrapT=T.RepeatWrapping;map.colorSpace=T.SRGBColorSpace;map.anisotropy=4;return map;}
