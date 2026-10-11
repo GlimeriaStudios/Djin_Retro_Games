@@ -23,6 +23,8 @@ export function integrateVehicle(c,input,dt,tuning){
   const blendStep=h/(c.drifting?DRIFT.engageTime:DRIFT.recoverTime);
   c.driftBlend=(c.driftBlend||0)+clamp(blendTarget-(c.driftBlend||0),-blendStep,blendStep);
   c.steer=(c.steer||0)+(target-(c.steer||0))*Math.min(1,h*(target===0?7:4.5));
+  // A 0.1-second decay time keeps collision jolts brief.
+  c.cameraKick=(c.cameraKick||0)*Math.exp(-10*h);
   c.impactTime=Math.max(0,(c.impactTime||0)-h);
   let thrust=0,braking=0;
   if(throttle>0){if(forward<-.5)braking=24*throttle;else thrust=14*powerScale*throttle*Math.max(0,1-(forward/62)**2)*(c.boost>0?1.5:1);}

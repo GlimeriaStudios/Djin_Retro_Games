@@ -1,4 +1,4 @@
-import {decorateTrack,alignSurface,constrainObstacles,blockedPoint} from './terrain.js';
+import {decorateTrack,alignSurface,constrainObstacles,blockedPoint,impactCamera} from './terrain.js';
 import {integrateVehicle,VEHICLE} from './vehicle.js';
 // GRAYLINE simulation. Metres, seconds; independent of rendering and networking.
 export const COLORS=['#ffb44a','#65c9ed','#ec809f','#b6dd77'];
@@ -6,7 +6,7 @@ export const WEAPONS=['rocket','mine','oil','boost'];
 // The 24 m base road flares to 30–32.4 m at corners for four-car drift battles.
 // Corner control points are spread out so the inner edge never folds over itself.
 // Only defaults change; imported/saved workshop layouts keep their authored geometry.
-export const DEFAULT_TRACK={id:'foundry-loop',name:'Foundry Loop',width:24,grip:7.2,power:19,steering:1.9,points:[[-76,25],[-72,-25],[-48,-62],[-6,-72],[30,-50],[67,-50],[96,-18],[90,24],[65,49],[15,40],[-22,59],[-59,49]],terrain:[{elevation:0,width:1,bank:0},{elevation:0,width:1.08,bank:0},{elevation:5,width:1.25,bank:-10},{elevation:12,width:1.25,bank:-7},{elevation:7,width:1.3,bank:8},{elevation:3,width:1.3,bank:-9},{elevation:2,width:1.25,bank:-12},{elevation:7,width:1.35,bank:10},{elevation:11,width:1.35,bank:-10},{elevation:4,width:1.18,bank:7},{elevation:1,width:1.2,bank:-8},{elevation:0,width:1.2,bank:0}],obstacles:[{s:.235,lane:-5,w:4,d:6,h:1.6,angle:0},{s:.52,lane:4,w:3.5,d:7,h:1.5,angle:0},{s:.60,lane:-3.5,w:3,d:6,h:1.8,angle:0},{s:.87,lane:4,w:3.5,d:5,h:1.5,angle:0}],pickups:[{s:.10,lane:-3,type:'rocket'},{s:.12,lane:3,type:'boost'},{s:.30,lane:0,type:'mine'},{s:.46,lane:-3,type:'rocket'},{s:.49,lane:3,type:'oil'},{s:.65,lane:0,type:'boost'},{s:.79,lane:-3,type:'mine'},{s:.82,lane:3,type:'rocket'}],props:[{x:-28,z:-11,w:23,d:18,h:7},{x:27,z:-3,w:19,d:15,h:11},{x:0,z:10,w:10,d:8,h:5}]};
+export const DEFAULT_TRACK={id:'foundry-loop',name:'Foundry Loop',width:24,grip:7.2,power:19,steering:1.9,points:[[-76,25],[-72,-25],[-48,-62],[-6,-72],[30,-50],[67,-50],[96,-18],[90,24],[65,49],[15,40],[-22,59],[-59,49]],terrain:[{elevation:0,width:1,bank:0},{elevation:0,width:1.08,bank:0,surface:'gravel'},{elevation:5,width:1.25,bank:-10,surface:'gravel'},{elevation:12,width:1.25,bank:-7},{elevation:7,width:1.3,bank:8},{elevation:3,width:1.3,bank:-9},{elevation:2,width:1.25,bank:-12},{elevation:7,width:1.35,bank:10},{elevation:11,width:1.35,bank:-10},{elevation:4,width:1.18,bank:7},{elevation:1,width:1.2,bank:-8},{elevation:0,width:1.2,bank:0}],obstacles:[{s:.235,lane:-5,w:4,d:6,h:1.6,angle:0},{s:.52,lane:4,w:3.5,d:7,h:1.5,angle:0},{s:.60,lane:-3.5,w:3,d:6,h:1.8,angle:0},{s:.87,lane:4,w:3.5,d:5,h:1.5,angle:0}],pickups:[{s:.10,lane:-3,type:'rocket'},{s:.12,lane:3,type:'boost'},{s:.30,lane:0,type:'mine'},{s:.46,lane:-3,type:'rocket'},{s:.49,lane:3,type:'oil'},{s:.65,lane:0,type:'boost'},{s:.79,lane:-3,type:'mine'},{s:.82,lane:3,type:'rocket'}],props:[{x:-28,z:-11,w:23,d:18,h:7},{x:27,z:-3,w:19,d:15,h:11},{x:0,z:10,w:10,d:8,h:5}]};
 export const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 export const angleDiff=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
 // Chassis bounds match the rendered body. Heading is clockwise in the X/Z plane.
@@ -38,7 +38,7 @@ export function resolveCarCollision(a,b){
  const impulse=va<0?-va*1.25/(2+INVERSE_INERTIA*(torqueA**2+torqueB**2)):0;
  a.x-=n.x*n.depth*.5;a.z-=n.z*n.depth*.5;b.x+=n.x*n.depth*.5;b.z+=n.z*n.depth*.5;
  a.vx-=n.x*impulse;a.vz-=n.z*impulse;b.vx+=n.x*impulse;b.vz+=n.z*impulse;
- a.impactTime=b.impactTime=.65; a.omega=clamp(a.omega-torqueA*impulse*INVERSE_INERTIA,-5,5);b.omega=clamp(b.omega+torqueB*impulse*INVERSE_INERTIA,-5,5);
+ impactCamera(a,impulse);impactCamera(b,impulse);a.impactTime=b.impactTime=.65; a.omega=clamp(a.omega-torqueA*impulse*INVERSE_INERTIA,-5,5);b.omega=clamp(b.omega+torqueB*impulse*INVERSE_INERTIA,-5,5);
  return impulse;
 }
 export function exposedAt(track,s){const f=s/track.length;return(f>.34&&f<.48)||(f>.72&&f<.82);}
@@ -48,7 +48,7 @@ export function constrainBarrier(c,track){
  const limit=near.width/2-.375-supportRadius(c,nx,nz);
  if(near.d<=limit)return;
  c.x=near.x+nx*limit;c.z=near.z+nz*limit;
- const vn=c.vx*nx+c.vz*nz;if(vn>0){c.vx-=nx*vn*1.3;c.vz-=nz*vn*1.3;}
+ const vn=c.vx*nx+c.vz*nz;if(vn>0){impactCamera(c,vn);c.vx-=nx*vn*1.3;c.vz-=nz*vn*1.3;}
 }
 export function validateTrack(t){
  if(!t||!Array.isArray(t.points)||t.points.length<6||t.points.length>32)throw Error('Track needs 6–32 control points');
@@ -57,6 +57,7 @@ export function validateTrack(t){
  if(!Array.isArray(t.pickups)||t.pickups.length>30||t.pickups.some(p=>!WEAPONS.includes(p.type)||!Number.isFinite(p.s)||p.s<0||p.s>=1||!Number.isFinite(p.lane)||Math.abs(p.lane)>12))throw Error('Invalid pickups');
  if(!Array.isArray(t.props)||t.props.length>40||t.props.some(p=>['x','z','w','d','h'].some(k=>!Number.isFinite(p[k])||Math.abs(p[k])>220)||p.w<=0||p.d<=0||p.h<=0))throw Error('Invalid blockout props');
  if(t.terrain!==undefined&&(!Array.isArray(t.terrain)||t.terrain.length!==t.points.length||t.terrain.some(p=>!p||!Number.isFinite(p.elevation)||p.elevation<0||p.elevation>20||!Number.isFinite(p.width)||p.width<.6||p.width>1.4||!Number.isFinite(p.bank)||Math.abs(p.bank)>18)))throw Error('Invalid node elevation, width or banking');
+ if(t.terrain?.some(p=>p.surface!==undefined&&!['asphalt','gravel'].includes(p.surface)))throw Error('Invalid road surface');
  if(t.obstacles!==undefined&&(!Array.isArray(t.obstacles)||t.obstacles.length>20||t.obstacles.some(p=>!p||['s','lane','w','d','h','angle'].some(k=>!Number.isFinite(p[k]))||p.s<0||p.s>=1||Math.abs(p.lane)>12||p.w<1||p.w>6||p.d<1||p.d>10||p.h<.5||p.h>3||Math.abs(p.angle)>45)))throw Error('Invalid road blockage');
  const out=structuredClone(t);out.width=clamp(+t.width||18,12,26);out.grip=clamp(+t.grip||7.2,3,12);out.power=clamp(+t.power||19,12,26);out.steering=clamp(+t.steering||1.9,1.2,2.8);out.name=String(t.name||'Foundry Loop').slice(0,32);out.id='foundry-loop';return out;
 }
@@ -72,7 +73,7 @@ export function makeGame(config=DEFAULT_TRACK){const track=buildTrack(config);re
 function event(g,type,x,z,extra={}){g.events.push({id:++g.eventId,type,x,z,time:g.time,...extra});if(g.events.length>25)g.events.shift();}
 export function startRound(g,reset=false){if(reset){g.cars.forEach(c=>c.score=0);g.round=0;g.winner=-1;}g.round++;g.phase='countdown';g.phaseTime=3;g.raceTime=0;g.roundWinner=-1;g.shots=[];g.hazards=[];g.pickups=g.track.config.pickups.map((p,i)=>({...p,id:i,cooldown:0,...g.track.at(p.s*g.track.length,p.lane)}));
  const start=(g.round-1)*g.track.length*.19;
- for(const c of g.cars){const s=start-4-Math.floor(c.id/2)*6,p=g.track.at(s,c.id%2?3:-3);Object.assign(c,{x:p.x,z:p.z,y:p.y,a:p.angle,vx:0,vz:0,omega:0,hp:100,alive:true,fall:0,weapon:null,ammo:0,cooldown:0,boost:0,oil:0,progress:s,lastS:((s%g.track.length)+g.track.length)%g.track.length,behind:0,off:0,shield:1.5,resetCd:0,stuck:0,fireHeld:false,reason:'',slip:0,lateralAccel:0,longitudinalAccel:0,steeringAngle:0,tireUsage:0,frontLoad:.52,rearLoad:.48,steer:0,drifting:false,driftDirection:0,driftBlend:0,impactTime:0,trackPitch:0,trackRoll:0,inputSeq:0});alignSurface(c,g.track);}
+ for(const c of g.cars){const s=start-4-Math.floor(c.id/2)*6,p=g.track.at(s,c.id%2?3:-3);Object.assign(c,{x:p.x,z:p.z,y:p.y,a:p.angle,vx:0,vz:0,omega:0,hp:100,alive:true,fall:0,weapon:null,ammo:0,cooldown:0,boost:0,oil:0,progress:s,lastS:((s%g.track.length)+g.track.length)%g.track.length,behind:0,off:0,shield:1.5,resetCd:0,stuck:0,fireHeld:false,reason:'',slip:0,lateralAccel:0,longitudinalAccel:0,steeringAngle:0,tireUsage:0,frontLoad:.52,rearLoad:.48,steer:0,drifting:false,driftDirection:0,driftBlend:0,impactTime:0,cameraKick:0,trackPitch:0,trackRoll:0,inputSeq:0});alignSurface(c,g.track);}
 }
 function botTarget(g,c,near,speed){let lane=(c.id-1.5)*1.5;const look=9+speed*.6;const block=g.track.obstacles.find(b=>{const d=(b.s*g.track.length-near.s+g.track.length)%g.track.length;return d<look+12;});if(block){const width=g.track.at(block.s*g.track.length).width;const left=block.lane-block.w/2-2.4,right=block.lane+block.w/2+2.4;lane=right<width/2-1.8?right:left;}return g.track.at(near.s+look,clamp(lane,-near.width/2+2,near.width/2-2));}
 export function botInput(g,c){const speed=Math.hypot(c.vx,c.vz),near=g.track.nearest(c.x,c.z),p=botTarget(g,c,near,speed),target=Math.atan2(p.x-c.x,p.z-c.z),diff=angleDiff(target,c.a),ahead=g.track.at(near.s+23),bend=Math.abs(angleDiff(ahead.angle,near?Math.atan2(near.tx,near.tz):c.a));let throttle=speed>(bend>.8?11:bend>.4?16:27)?-.65:1;
@@ -91,10 +92,10 @@ export function drive(c,input,dt,track){
  const exposed=exposedAt(track,near.s);
  constrainBarrier(c,track);
  c.off=exposed&&near.d>half+1?c.off+dt:0;
- if(input.reset&&c.resetCd<=0){const p=recoveryPoint(track,c.progress);Object.assign(c,{x:p.x,z:p.z,y:p.y,a:p.angle,vx:0,vz:0,omega:0,steer:0,drifting:false,driftDirection:0,driftBlend:0,impactTime:0,steeringAngle:0,lateralAccel:0,longitudinalAccel:0,hp:Math.max(1,c.hp-20),off:0,resetCd:6});}
+ if(input.reset&&c.resetCd<=0){const p=recoveryPoint(track,c.progress);Object.assign(c,{x:p.x,z:p.z,y:p.y,a:p.angle,vx:0,vz:0,omega:0,steer:0,drifting:false,driftDirection:0,driftBlend:0,impactTime:0,cameraKick:0,steeringAngle:0,lateralAccel:0,longitudinalAccel:0,hp:Math.max(1,c.hp-20),off:0,resetCd:6});}
 }
 function eliminate(g,c,reason){if(!c.alive)return;c.alive=false;c.reason=reason;if(reason==='FELL OFF'){c.fall=.1;c.fallStart=c.y;};event(g,'eliminate',c.x,c.z,{car:c.id,reason});}
-function hit(g,c,damage,x,z,force=9,owner=-1){if(c.shield>0||!c.alive)return;const d=Math.hypot(c.x-x,c.z-z)||1;c.vx+=(c.x-x)/d*force;c.vz+=(c.z-z)/d*force;c.omega+=force*.11;c.impactTime=.65;c.hp=Math.max(0,c.hp-damage);event(g,'hit',c.x,c.z,{car:c.id,owner,damage,wrecked:c.hp<=0});if(c.hp<=0)eliminate(g,c,'WRECKED');}
+function hit(g,c,damage,x,z,force=9,owner=-1){if(c.shield>0||!c.alive)return;const d=Math.hypot(c.x-x,c.z-z)||1;c.vx+=(c.x-x)/d*force;c.vz+=(c.z-z)/d*force;c.omega+=force*.11;c.impactTime=.65;impactCamera(c,force);c.hp=Math.max(0,c.hp-damage);event(g,'hit',c.x,c.z,{car:c.id,owner,damage,wrecked:c.hp<=0});if(c.hp<=0)eliminate(g,c,'WRECKED');}
 export function fireWeapon(g,c){if(!c.alive||!c.weapon||c.cooldown>0)return false;const fx=Math.sin(c.a),fz=Math.cos(c.a),type=c.weapon;c.cooldown=.45;
  if(type==='rocket'){g.shots.push({id:++g.eventId,x:c.x+fx*3,z:c.z+fz*3,vx:fx*55+c.vx*.4,vz:fz*55+c.vz*.4,owner:c.id,life:2.2});}
  if(type==='mine'||type==='oil')g.hazards.push({id:++g.eventId,type,x:c.x-fx*3.5,z:c.z-fz*3.5,owner:c.id,life:type==='oil'?9:18,age:0});
